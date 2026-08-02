@@ -27,46 +27,90 @@ jobs:
           set -u
           domain='moduindustries.ca'
           www="www.$domain"
+          failed=0
 
           echo '=== DNS ==='
-          python3 - "$domain" "$www" <<'PY'
+          python3 - "$domain" "$www" <<'PY' || failed=1
           import socket
           import sys
+          expected_v4 = {
+              "185.199.108.153",
+              "185.199.109.153",
+              "185.199.110.153",
+              "185.199.111.153",
+          }
+          expected_v6 = {
+              "2606:50c0:8000::153",
+              "2606:50c0:8001::153",
+              "2606:50c0:8002::153",
+              "2606:50c0:8003::153",
+          }
           for host in sys.argv[1:]:
-              try:
-                  rows = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)
-                  addresses = sorted({row[4][0] for row in rows})
-                  print(f"{host}={','.join(addresses)}")
-              except Exception as exc:
-                  print(f"{host}=ERROR:{type(exc).__name__}:{exc}")
+              rows = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)
+              addresses = {row[4][0] for row in rows}
+              print(f"{host}={','.join(sorted(addresses))}")
+              if not expected_v4.issubset(addresses) or not expected_v6.issubset(addresses):
+                  raise SystemExit(f"unexpected DNS answer set for {host}")
           PY
 
           echo '=== PAGES API ==='
-          curl --fail-with-body --silent --show-error \
-            -H 'Accept: application/vnd.github+json' \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H 'X-GitHub-Api-Version: 2022-11-28' \
-            "https://api.github.com/repos/$REPOSITORY/pages" \
-            | python3 -c 'import json,sys; p=json.load(sys.stdin); print(json.dumps({k:p.get(k) for k in ("status","html_url","cname","https_enforced","protected_domain_state","pending_domain_unverified_at","https_certificate")},sort_keys=True))'
+          pages_json="$({
+            curl --fail-with-body --silent --show-error \
+              -H 'Accept: application/vnd.github+json' \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "https://api.github.com/repos/$REPOSITORY/pages"
+          })" || failed=1
+          printf '%s\n' "$pages_json" \
+            | python3 -c 'import json,sys; p=json.load(sys.stdin); print(json.dumps({k:p.get(k) for k in ("status","html_url","cname","https_enforced","protected_domain_state","pending_domain_unverified_at","https_certificate")},sort_keys=True))' \
+            || failed=1
+          printf '%s\n' "$pages_json" \
+            | python3 - "$domain" <<'PY' || failed=1
+          import json
+          import sys
+          expected = sys.argv[1]
+          payload = json.load(sys.stdin)
+          if payload.get("status") != "built":
+              raise SystemExit("Pages is not built")
+          if payload.get("cname") != expected:
+              raise SystemExit("Pages custom domain mismatch")
+          PY
 
           echo '=== HTTP ==='
-          curl --silent --show-error --location --head \
+          http_result="$(curl --silent --show-error --location --head \
             --connect-timeout 10 --max-time 30 \
             --write-out 'RESULT http_code=%{http_code} final=%{url_effective} verify=%{ssl_verify_result}\n' \
-            "http://$domain/" || true
+            "http://$domain/")" || failed=1
+          printf '%s\n' "$http_result"
+          grep -q 'RESULT http_code=200' <<<"$http_result" || failed=1
 
           echo '=== HTTPS APEX ==='
-          curl --silent --show-error --location --head \
+          apex_result="$(curl --silent --show-error --location --head \
             --connect-timeout 10 --max-time 30 \
             --write-out 'RESULT http_code=%{http_code} final=%{url_effective} verify=%{ssl_verify_result}\n' \
-            "https://$domain/" || true
+            "https://$domain/")" || failed=1
+          printf '%s\n' "$apex_result"
+          grep -q 'RESULT http_code=200' <<<"$apex_result" || failed=1
+          grep -q 'verify=0' <<<"$apex_result" || failed=1
 
           echo '=== HTTPS WWW ==='
-          curl --silent --show-error --location --head \
+          www_result="$(curl --silent --show-error --location --head \
             --connect-timeout 10 --max-time 30 \
             --write-out 'RESULT http_code=%{http_code} final=%{url_effective} verify=%{ssl_verify_result}\n' \
-            "https://$www/" || true
+            "https://$www/")" || failed=1
+          printf '%s\n' "$www_result"
+          grep -q 'RESULT http_code=200' <<<"$www_result" || failed=1
+          grep -q 'verify=0' <<<"$www_result" || failed=1
 
           echo '=== TLS CERTIFICATE ==='
-          timeout 20 openssl s_client -connect "$domain:443" -servername "$domain" </dev/null 2>/dev/null \
-            | openssl x509 -noout -subject -issuer -dates -ext subjectAltName || true
+          certificate="$(timeout 20 openssl s_client -connect "$domain:443" -servername "$domain" </dev/null 2>/dev/null \
+            | openssl x509 -noout -subject -issuer -dates -ext subjectAltName)" || failed=1
+          printf '%s\n' "$certificate"
+          grep -q "DNS:$domain" <<<"$certificate" || failed=1
+          grep -q "DNS:$www" <<<"$certificate" || failed=1
+
+          if [[ "$failed" -ne 0 ]]; then
+            echo 'DOMAIN_HEALTH=FAIL'
+            exit 1
+          fi
+          echo 'DOMAIN_HEALTH=PASS'
