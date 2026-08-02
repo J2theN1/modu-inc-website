@@ -1,12 +1,14 @@
 name: Domain health probe
 
 on:
-  push:
-    branches:
-      - ops/domain-health-probe-20260801
+  pull_request:
     paths:
       - .github/workflows/domain-health-probe.yml
+      - CNAME
+      - index.html
   workflow_dispatch:
+  schedule:
+    - cron: "17 15 * * *"
 
 permissions:
   contents: read
