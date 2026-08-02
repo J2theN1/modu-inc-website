@@ -47,6 +47,7 @@ jobs:
           }, sort_keys=True))
           '
 
+          set +e
           PAGES_JSON="$pages_json" python3 - "$domain" "$www" <<'PY'
           import json
           import os
@@ -69,12 +70,13 @@ jobs:
           print("HTTPS_CERTIFICATE_APPROVED=1")
           PY
           decision=$?
+          set -e
 
-          if [[ "$decision" -eq 20 ]]; then
+          if [[ "$decision" -eq 20 || "$decision" -eq 21 ]]; then
             exit 0
           fi
-          if [[ "$decision" -eq 21 ]]; then
-            exit 0
+          if [[ "$decision" -ne 0 ]]; then
+            exit "$decision"
           fi
 
           curl --fail-with-body --silent --show-error \
