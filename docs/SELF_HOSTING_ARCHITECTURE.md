@@ -8,30 +8,43 @@ Keep the public corporate site in this repository and serve it through GitHub Pa
 
 - Repository: `J2theN1/modu-inc-website`
 - Publishing source: `main` branch, repository root
-- Public origin: `https://j2then1.github.io/modu-inc-website/`
-- HTTPS: enforced by GitHub Pages
+- Canonical public origin: `https://moduindustries.ca/`
+- Rollback origin: `https://j2then1.github.io/modu-inc-website/`
+- Registrar: Cloudflare Registrar
+- DNS provider: Cloudflare
+- DNS mode during certificate issuance: DNS-only
+- HTTPS: GitHub Pages certificate provisioning is monitored automatically; enforcement is enabled only after the certificate covers both the apex and `www` names
 
-## Domain cutover after registration
+## Current domain configuration
 
-1. Register the chosen domain with a CIRA-certified registrar.
-2. Keep registrar lock, account MFA, auto-renew, and DNSSEC enabled.
-3. Add the chosen custom domain in GitHub Pages settings before changing DNS.
-4. Configure the registrar/DNS provider with GitHub Pages records:
-   - `www`: CNAME to `j2then1.github.io`
-   - apex: GitHub Pages A/AAAA records from the current GitHub documentation
-5. Verify the domain in GitHub and enable HTTPS.
-6. Test apex, `www`, redirects, certificate issuance, and rollback before announcing the domain.
+- Apex: all four current GitHub Pages A records
+- Apex: all four current GitHub Pages AAAA records
+- `www`: CNAME to `j2then1.github.io`
+- GitHub Pages custom domain: `moduindustries.ca`
+- Canonical metadata: `https://moduindustries.ca/`
+- `www` redirects to the apex through GitHub Pages
+- No wildcard DNS record
+- No home IP, residential router port, or self-hosted mail server is exposed
 
-Do not add a `CNAME` file until the domain is actually registered and the exact canonical hostname is approved.
+## Cutover verification
+
+1. Confirm the domain remains present in Cloudflare Registrar inventory.
+2. Confirm the CIRA registration and registrant-contact notices.
+3. Confirm the exact A, AAAA, and `www` CNAME records remain DNS-only while GitHub provisions TLS.
+4. Keep the custom domain attached to the GitHub Pages repository.
+5. Keep the scheduled HTTPS-enforcement workflow enabled. It applies `https_enforced=true` only after GitHub reports an approved certificate covering both `moduindustries.ca` and `www.moduindustries.ca`.
+6. Run the domain health probe after HTTPS enforcement and require successful DNS, redirect, certificate, apex, and `www` checks.
+7. Verify the domain at the GitHub account level with the retained TXT challenge record to reduce takeover risk.
+8. Preserve the GitHub Pages origin as a rollback route until the HTTPS health probe passes.
 
 ## What remains independent
 
 - Website code and history: GitHub repository
 - Hosting and TLS: GitHub Pages
-- DNS: registrar DNS or a dedicated DNS provider
+- DNS and registration: Cloudflare, replaceable independently of the site code
 - Business email: separate mail provider; do not run mail from the home connection
 - Backups: Git plus mirrored repository/archive
-- Monitoring: external HTTPS and DNS checks
+- Monitoring: scheduled GitHub Actions and external DNS/HTTPS checks
 
 ## Designs rejected for the corporate landing page
 
