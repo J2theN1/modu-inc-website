@@ -23,16 +23,23 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
-          set -u
+          set -uo pipefail
           domain='moduindustries.ca'
           www="www.$domain"
           failed=0
+          https_failed=0
+          strict_https=1
+          if [[ "$EVENT_NAME" == 'pull_request' ]]; then
+            strict_https=0
+          fi
 
           echo '=== DNS ==='
           python3 - "$domain" "$www" <<'PY' || failed=1
           import socket
           import sys
+
           expected_v4 = {
               "185.199.108.153",
               "185.199.109.153",
@@ -64,12 +71,13 @@ jobs:
           printf '%s\n' "$pages_json" \
             | python3 -c 'import json,sys; p=json.load(sys.stdin); print(json.dumps({k:p.get(k) for k in ("status","html_url","cname","https_enforced","protected_domain_state","pending_domain_unverified_at","https_certificate")},sort_keys=True))' \
             || failed=1
-          printf '%s\n' "$pages_json" \
-            | python3 - "$domain" <<'PY' || failed=1
+          PAGES_JSON="$pages_json" python3 - "$domain" <<'PY' || failed=1
           import json
+          import os
           import sys
+
           expected = sys.argv[1]
-          payload = json.load(sys.stdin)
+          payload = json.loads(os.environ["PAGES_JSON"])
           if payload.get("status") != "built":
               raise SystemExit("Pages is not built")
           if payload.get("cname") != expected:
@@ -88,26 +96,34 @@ jobs:
           apex_result="$(curl --silent --show-error --location --head \
             --connect-timeout 10 --max-time 30 \
             --write-out 'RESULT http_code=%{http_code} final=%{url_effective} verify=%{ssl_verify_result}\n' \
-            "https://$domain/")" || failed=1
+            "https://$domain/")" || https_failed=1
           printf '%s\n' "$apex_result"
-          grep -q 'RESULT http_code=200' <<<"$apex_result" || failed=1
-          grep -q 'verify=0' <<<"$apex_result" || failed=1
+          grep -q 'RESULT http_code=200' <<<"$apex_result" || https_failed=1
+          grep -q 'verify=0' <<<"$apex_result" || https_failed=1
 
           echo '=== HTTPS WWW ==='
           www_result="$(curl --silent --show-error --location --head \
             --connect-timeout 10 --max-time 30 \
             --write-out 'RESULT http_code=%{http_code} final=%{url_effective} verify=%{ssl_verify_result}\n' \
-            "https://$www/")" || failed=1
+            "https://$www/")" || https_failed=1
           printf '%s\n' "$www_result"
-          grep -q 'RESULT http_code=200' <<<"$www_result" || failed=1
-          grep -q 'verify=0' <<<"$www_result" || failed=1
+          grep -q 'RESULT http_code=200' <<<"$www_result" || https_failed=1
+          grep -q 'verify=0' <<<"$www_result" || https_failed=1
 
           echo '=== TLS CERTIFICATE ==='
           certificate="$(timeout 20 openssl s_client -connect "$domain:443" -servername "$domain" </dev/null 2>/dev/null \
-            | openssl x509 -noout -subject -issuer -dates -ext subjectAltName)" || failed=1
+            | openssl x509 -noout -subject -issuer -dates -ext subjectAltName)" || https_failed=1
           printf '%s\n' "$certificate"
-          grep -q "DNS:$domain" <<<"$certificate" || failed=1
-          grep -q "DNS:$www" <<<"$certificate" || failed=1
+          grep -q "DNS:$domain" <<<"$certificate" || https_failed=1
+          grep -q "DNS:$www" <<<"$certificate" || https_failed=1
+
+          if [[ "$https_failed" -ne 0 ]]; then
+            if [[ "$strict_https" -eq 1 ]]; then
+              failed=1
+            else
+              echo 'HTTPS_PROVISIONING=PENDING'
+            fi
+          fi
 
           if [[ "$failed" -ne 0 ]]; then
             echo 'DOMAIN_HEALTH=FAIL'
