@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inspect a synthetic, provider-neutral MODU workflow trace showing governed writes, a resumable verification gate, exact-once submission, and result-bound completion evidence.">
+    <meta name="theme-color" content="#0b0f14">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://moduindustries.ca/demo.html">
+    <meta property="og:title" content="Workflow demo — Modu Inc.">
+    <meta property="og:description" content="An inspectable public demonstration of MODU's authorize, execute, gate, resume, submit, and verify workflow model.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://moduindustries.ca/demo.html">
+    <meta property="og:site_name" content="Modu Inc.">
+    <title>Workflow demo — Modu Inc.</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <header class="site-header" role="banner">
+        <div class="container header-inner">
+            <a href="index.html" class="logo" aria-label="MODU INDUSTRIES LTD. home"><span class="logo-mark">M</span><span>Modu Inc.</span></a>
+            <nav class="nav" aria-label="Main navigation">
+                <a href="product.html">Product</a>
+                <a href="demo.html">Demo</a>
+                <a href="evidence.html">Evidence</a>
+                <a href="pitch-deck.html">Pitch</a>
+                <a href="company.html">Company</a>
+                <a href="security.html">Security</a>
+                <a href="support.html">Support</a>
+                <a href="privacy.html">Privacy</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <main id="main" role="main">
+        <section class="page-hero" aria-labelledby="page-heading">
+            <div class="container">
+                <p class="eyebrow">Inspectable demonstration</p>
+                <h1 id="page-heading">A workflow that writes, pauses, resumes, and proves what happened.</h1>
+                <p class="hero-lead">This synthetic, provider-neutral trace demonstrates MODU's execution model without exposing private code, credentials, account data, or live provider responses.</p>
+                <div class="button-row">
+                    <a class="btn btn-primary" href="demo-workflow.json">Open the machine-readable trace</a>
+                    <a class="btn btn-secondary" href="product.html">Review the product boundary</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Scenario</p>
+                    <h2>Create one zero-cost programme account without losing control at a verification gate.</h2>
+                    <p>The workflow uses sourced company data and an opaque vault credential, routes human verification as a bounded gate, resumes the same operation, executes the account action once, and captures confirmation evidence.</p>
+                </div>
+                <div class="demo-guardrails" aria-label="Workflow guardrails">
+                    <article class="card"><h3>Writes are enabled</h3><p>Sourced form fields and reversible transitions execute automatically inside the assigned workflow scope.</p></article>
+                    <article class="card"><h3>Secrets stay opaque</h3><p>Passwords and one-time codes are consumed in memory and excluded from public traces and durable receipts.</p></article>
+                    <article class="card"><h3>Gates preserve state</h3><p>The verification lease is bound to the workflow, session, origin, page and operation, then accepted once.</p></article>
+                    <article class="card"><h3>Submission is exact-once</h3><p>After a durable submit event, recovery may verify or capture completion but cannot emit another submit.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-alt">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Synthetic trace</p>
+                    <h2>Eight durable states from authority to confirmation.</h2>
+                    <p>Every step below corresponds to a structured entry in <a href="demo-workflow.json">demo-workflow.json</a>.</p>
+                </div>
+                <ol class="demo-trace">
+                    <li><span>01</span><div><strong>Authorized</strong><p>Bind the goal, company identity, allowed origin, duplicate guard, consequences and completion criteria.</p></div><code>authorized</code></li>
+                    <li><span>02</span><div><strong>Company field written</strong><p>Fill the sourced business email and record its source without exposing the value in public evidence.</p></div><code>executing</code></li>
+                    <li><span>03</span><div><strong>Vault credential entered</strong><p>Consume an opaque credential handle once inside the audited browser action.</p></div><code>executing</code></li>
+                    <li><span>04</span><div><strong>Verification gate presented</strong><p>Issue an expiring lease bound to the exact workflow, page, session and operation.</p></div><code>gate_presented</code></li>
+                    <li><span>05</span><div><strong>Gate satisfied</strong><p>Verify a one-time signed completion; reject an expired, replayed or mismatched token.</p></div><code>gate_satisfied</code></li>
+                    <li><span>06</span><div><strong>Same workflow resumed</strong><p>Revalidate origin, page and action identity before another mutation.</p></div><code>resuming</code></li>
+                    <li><span>07</span><div><strong>Account action executed once</strong><p>Bind the requested operation, selected adapter, worker, exit status and observed result.</p></div><code>submitted</code></li>
+                    <li><span>08</span><div><strong>Confirmation captured</strong><p>Record the completion marker and receipt, then disable duplicate submission.</p></div><code>completed</code></li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container two-column">
+                <div>
+                    <p class="eyebrow">What this proves</p>
+                    <h2>A reviewable product mechanism—not a screenshot of a chatbot.</h2>
+                </div>
+                <div class="prose">
+                    <p>The trace makes the control model concrete: writes are permitted within scope, secrets remain separated, external gates do not erase state, and completion is backed by bound evidence rather than an assistant's assertion.</p>
+                    <p>It does not claim a customer deployment, production certification, live provider approval, or independent security assessment.</p>
+                    <p><a href="evidence.html">Return to the public evidence index →</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer" role="contentinfo">
+        <div class="container footer-inner">
+            <p class="footer-copy">MODU INDUSTRIES LTD. · Modu Inc. operating brand</p>
+            <p class="footer-legal"><a href="product.html">Product</a> · <a href="demo.html">Demo</a> · <a href="evidence.html">Evidence</a> · <a href="pitch-deck.html">Pitch</a> · <a href="company.html">Company</a> · <a href="security.html">Security</a> · <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a></p>
+            <p class="footer-legal">West Kelowna, British Columbia, Canada · <a href="mailto:contact@moduindustries.ca">contact@moduindustries.ca</a></p>
+        </div>
+    </footer>
+</body>
+</html>
