@@ -3,9 +3,21 @@ name: Domain health probe
 on:
   pull_request:
     paths:
-      - .github/workflows/domain-health-probe.yml
+      - "*.html"
+      - styles.css
+      - robots.txt
+      - sitemap.xml
       - CNAME
-      - index.html
+      - tests/**
+      - .github/workflows/domain-health-probe.yml
+  push:
+    branches: [main]
+    paths:
+      - "*.html"
+      - styles.css
+      - robots.txt
+      - sitemap.xml
+      - CNAME
   workflow_dispatch:
   schedule:
     - cron: "17 15 * * *"
@@ -15,9 +27,22 @@ permissions:
   pages: read
 
 jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify public-site contract
+        run: |
+          python -m unittest discover -s tests -v
+          git diff --check
+
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - name: Resolve and probe custom domain
         env:
@@ -116,6 +141,27 @@ jobs:
           printf '%s\n' "$certificate"
           grep -q "DNS:$domain" <<<"$certificate" || https_failed=1
           grep -q "DNS:$www" <<<"$certificate" || https_failed=1
+
+          if [[ "$EVENT_NAME" != 'pull_request' ]]; then
+            echo '=== PUBLIC PATHS ==='
+            paths=(/ /product.html /evidence.html /company.html /security.html /support.html /privacy.html /pitch-deck.html /robots.txt /sitemap.xml)
+            for path in "${paths[@]}"; do
+              ok=0
+              for attempt in {1..12}; do
+                body="$(mktemp)"
+                code="$(curl --silent --show-error --location --connect-timeout 10 --max-time 30 --output "$body" --write-out '%{http_code}' "https://$domain$path")" || code=000
+                if [[ "$code" == '200' ]] && ! grep -Fq "There isn't a GitHub Pages site here" "$body"; then
+                  echo "$path=200"
+                  ok=1
+                  rm -f "$body"
+                  break
+                fi
+                rm -f "$body"
+                sleep 10
+              done
+              [[ "$ok" -eq 1 ]] || failed=1
+            done
+          fi
 
           if [[ "$https_failed" -ne 0 ]]; then
             if [[ "$strict_https" -eq 1 ]]; then
