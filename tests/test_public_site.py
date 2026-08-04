@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from html.parser import HTMLParser
 from pathlib import Path
+import json
 import re
 import unittest
 from urllib.parse import urlparse
@@ -13,6 +14,7 @@ ORIGIN = "https://moduindustries.ca"
 REQUIRED_PAGES = {
     "index.html",
     "product.html",
+    "demo.html",
     "evidence.html",
     "company.html",
     "security.html",
@@ -215,6 +217,31 @@ class PublicSiteContractTests(unittest.TestCase):
             for name in REQUIRED_PAGES
         }
         self.assertEqual(locations, expected)
+
+    def test_public_demo_trace_is_machine_readable_and_bounded(self) -> None:
+        trace_path = ROOT / "demo-workflow.json"
+        self.assertTrue(trace_path.is_file(), "machine-readable workflow trace missing")
+        payload = json.loads(trace_path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["classification"], "synthetic public demonstration")
+        self.assertEqual(
+            [step["state"] for step in payload["trace"]],
+            [
+                "authorized",
+                "executing",
+                "executing",
+                "gate_presented",
+                "gate_satisfied",
+                "resuming",
+                "submitted",
+                "completed",
+            ],
+        )
+        rendered = json.dumps(payload).casefold()
+        for forbidden in ("password_value", "cookie_value", "otp_value", "recovery_code"):
+            self.assertNotIn(forbidden, rendered)
+        demo_text = parse_page(ROOT / "demo.html").text.casefold()
+        self.assertIn("synthetic", demo_text)
+        self.assertIn("not claim a customer deployment", demo_text)
 
     def test_cname_is_preserved(self) -> None:
         self.assertEqual((ROOT / "CNAME").read_text(encoding="utf-8").strip(), "moduindustries.ca")
