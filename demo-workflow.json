@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "demo_id": "public-account-enrolment-resume",
+  "title": "Bounded account-enrolment workflow",
+  "classification": "synthetic public demonstration",
+  "product_claim": "Demonstrates the workflow model and evidence structure; it is not a customer deployment or a live provider receipt.",
+  "goal": "Create one zero-cost programme account using sourced company data, preserve state around a human verification gate, and verify the resulting account without duplicating the action.",
+  "authority": {
+    "company_identity_source": "public company record",
+    "write_policy": "sourced reversible writes are automatic",
+    "duplicate_guard": "required before account creation",
+    "terms_policy": "only an exact pre-approved document digest may be accepted",
+    "payment_policy": "no charge is authorized",
+    "final_submission_policy": "execute once, then verify"
+  },
+  "trace": [
+    {
+      "sequence": 1,
+      "state": "authorized",
+      "action": "bind workflow scope",
+      "evidence": "workflow, identity, origin and consequence classes recorded"
+    },
+    {
+      "sequence": 2,
+      "state": "executing",
+      "action": "fill sourced company email",
+      "evidence": "field source recorded; value excluded from public trace"
+    },
+    {
+      "sequence": 3,
+      "state": "executing",
+      "action": "enter vault-backed password",
+      "evidence": "opaque credential handle consumed once; secret excluded from receipts"
+    },
+    {
+      "sequence": 4,
+      "state": "gate_presented",
+      "action": "route human verification",
+      "evidence": "gate lease bound to workflow, browser session, origin, page digest and action"
+    },
+    {
+      "sequence": 5,
+      "state": "gate_satisfied",
+      "action": "verify one-time completion token",
+      "evidence": "signed completion accepted once; replay rejected"
+    },
+    {
+      "sequence": 6,
+      "state": "resuming",
+      "action": "resume the same browser workflow",
+      "evidence": "page and operation identity revalidated before mutation"
+    },
+    {
+      "sequence": 7,
+      "state": "submitted",
+      "action": "execute the bound account-creation action once",
+      "evidence": "worker, adapter, operation, exit status and result digests bound together"
+    },
+    {
+      "sequence": 8,
+      "state": "completed",
+      "action": "capture confirmation and update registry",
+      "evidence": "confirmation marker and durable receipt recorded; duplicate submit disabled"
+    }
+  ],
+  "public_boundaries": [
+    "No passwords, cookies, OTP values, recovery codes, device addresses or private provider responses are included.",
+    "The trace is synthetic and intentionally provider-neutral.",
+    "A real deployment may stop at provider controls that cannot be automated or delegated lawfully."
+  ]
+}
