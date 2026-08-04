@@ -122,7 +122,7 @@ SUPPORT_BODY = '''                <h2 class="section-title">Contact support</h2>
                 <p>Support is currently founder-led and prioritized by severity, contractual commitments and available evidence. This public page does not create a guaranteed response time or service-level agreement. Any binding support terms must appear in the applicable written contract.</p>'''
 
 PRIVACY_BODY = '''                <h2 class="section-title">Scope</h2>
-                <p>This notice applies to the public website at <a href="https://moduindustries.ca/">moduindustries.ca</a>. It does not describe all MODU products, private development systems, client deployments or separately contracted services.</p>
+                <p>This notice applies to the public website at <a href="https://moduindustries.ca/">moduindustries.ca</a>. It covers only this public website, not private development systems, client deployments or separately contracted services.</p>
 
                 <h2 class="section-title">Website data</h2>
                 <p>The current public website does not provide an account login, payment form or embedded customer database. The published source does not intentionally include a first-party analytics script or advertising tracker.</p>
