@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Security practices, responsible disclosure and current assurance status.">
+    <meta name="theme-color" content="#0d0f12">
+    <link rel="canonical" href="https://moduindustries.ca/security.html">
+    <title>Security — MODU INDUSTRIES LTD.</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <header class="site-header" role="banner">
+        <div class="container">
+            <a href="index.html" class="logo" aria-label="MODU INDUSTRIES LTD. home">Modu Inc.</a>
+            <nav class="nav" aria-label="Company">
+                <a href="company.html">Company</a>
+                <a href="security.html">Security</a>
+                <a href="support.html">Support</a>
+                <a href="privacy.html">Privacy</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <main id="main" role="main">
+        <section class="hero" aria-labelledby="page-heading">
+            <div class="container">
+                <p class="hero-tagline">MODU INDUSTRIES LTD.</p>
+                <h1 id="page-heading" class="hero-title">Security</h1>
+                <p class="hero-sub">Security practices, responsible disclosure and current assurance status.</p>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Security approach</h2>
+                <p>MODU is designed around bounded capabilities, explicit authority, verifiable receipts and separation between human credentials, machine credentials and public application surfaces.</p>
+                <ul class="principles-list">
+                    <li><strong>Least authority:</strong> integrations should receive only the scopes required for their documented job.</li>
+                    <li><strong>Secret separation:</strong> passwords, tokens, OTPs, recovery codes and private keys are not intended for public repositories, public logs or company spreadsheets.</li>
+                    <li><strong>Verification:</strong> operational work is expected to produce evidence that can be checked rather than relying only on a success message.</li>
+                    <li><strong>Private control paths:</strong> owner-authorized terminal and device-control lanes are kept separate from public marketplace applications.</li>
+                    <li><strong>Data boundaries:</strong> personal, health, family, company and client information are treated as distinct classes rather than one shared memory pool.</li>
+                </ul>
+
+                <h2 class="section-title">Responsible disclosure</h2>
+                <p>Send a good-faith security report to <a href="mailto:security@moduindustries.ca">security@moduindustries.ca</a>. Include the affected service, reproduction steps, impact, and a safe way to contact you. Do not include passwords, private keys, personal data or unrelated customer information.</p>
+                <p>Please do not conduct denial-of-service testing, social engineering, physical intrusion, persistence, data destruction or testing against third-party systems without their written authorization. A public bug-bounty payment is not promised unless it is agreed in writing before work begins.</p>
+
+                <h2 class="section-title">Current assurance status</h2>
+                <p>This page describes working practices and direction. MODU does not use this page to claim SOC 2, ISO 27001, HIPAA, government clearance or another independent certification that has not been formally issued.</p>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer" role="contentinfo">
+        <div class="container footer-inner">
+            <p class="footer-copy">© MODU INDUSTRIES LTD. · Modu Inc. brand</p>
+            <p class="footer-legal"><a href="company.html">Company</a> · <a href="security.html">Security</a> · <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a></p>
+        </div>
+    </footer>
+</body>
+</html>
