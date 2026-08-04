@@ -1,0 +1,42 @@
+name: Public product evidence once
+
+on:
+  push:
+    branches:
+      - feat/public-product-evidence
+    paths:
+      - scripts/apply_public_product_evidence_once.py
+      - .github/workflows/public-product-evidence-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-commit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/public-product-evidence
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Apply reviewed site change
+        run: python scripts/apply_public_product_evidence_once.py
+      - name: Verify site contract
+        run: |
+          python -m unittest discover -s tests -v
+          python -m py_compile tests/test_public_site.py
+          git diff --check
+          test "$(cat CNAME)" = "moduindustries.ca"
+      - name: Commit exact verified tree
+        run: |
+          rm -f .github/workflows/public-product-evidence-once.yml
+          rm -f scripts/apply_public_product_evidence_once.py
+          git add -A
+          git config user.name 'modu-integration-bot'
+          git config user.email 'modu-integration-bot@users.noreply.github.com'
+          git commit -m 'site: publish public product evidence'
+          git push origin HEAD:feat/public-product-evidence
