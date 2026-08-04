@@ -1,0 +1,43 @@
+name: Pages readiness fix once
+
+on:
+  push:
+    branches:
+      - fix/pages-build-readiness
+    paths:
+      - .github/workflows/pages-readiness-fix-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-commit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/pages-build-readiness
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Apply reviewed readiness fix
+        run: python scripts/apply_pages_readiness_fix_once.py
+      - name: Verify site and workflow contract
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -v
+          git diff --check
+          test "$(cat CNAME)" = "moduindustries.ca"
+          grep -Fq 'for attempt in {1..18}' .github/workflows/domain-health-probe.yml
+          grep -Fq 'pages_ready=1' .github/workflows/domain-health-probe.yml
+      - name: Commit exact verified tree
+        run: |
+          rm -f .github/workflows/pages-readiness-fix-once.yml
+          rm -f scripts/apply_pages_readiness_fix_once.py
+          rm -f scripts/run_pages_readiness_fix_once.sh
+          git add -A
+          git config user.name 'modu-integration-bot'
+          git config user.email 'modu-integration-bot@users.noreply.github.com'
+          git commit -m 'ci: wait for GitHub Pages deployment readiness'
+          git push origin HEAD:fix/pages-build-readiness
