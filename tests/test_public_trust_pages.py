@@ -36,8 +36,10 @@ class PublicTrustPagesTest(unittest.TestCase):
             with self.subTest(page=page):
                 self.assertIn(page, parser.hrefs)
         self.assertIn("MODU INDUSTRIES LTD.", html)
-        self.assertIn("mailto:security@moduindustries.ca", html)
-        self.assertIn("mailto:support@moduindustries.ca", html)
+        self.assertIn("mailto:contact@moduindustries.ca?subject=Security%20report", html)
+        self.assertIn("mailto:contact@moduindustries.ca?subject=Support%20request", html)
+        self.assertNotIn("security@moduindustries.ca", html)
+        self.assertNotIn("support@moduindustries.ca", html)
 
     def test_each_page_identifies_company_and_canonical_domain(self) -> None:
         for page in PAGES:
@@ -67,7 +69,8 @@ class PublicTrustPagesTest(unittest.TestCase):
             with self.subTest(claim=claim):
                 self.assertNotIn(claim, html)
         self.assertIn("responsible disclosure", html)
-        self.assertIn("security@moduindustries.ca", html)
+        self.assertIn("contact@moduindustries.ca?subject=security%20report", html)
+        self.assertNotIn("security@moduindustries.ca", html)
 
 
 if __name__ == "__main__":
