@@ -14,6 +14,7 @@ ORIGIN = "https://moduindustries.ca"
 REQUIRED_PAGES = {
     "index.html",
     "product.html",
+    "programs.html",
     "demo.html",
     "evidence.html",
     "company.html",
