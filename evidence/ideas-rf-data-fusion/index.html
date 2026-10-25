@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence — IDEaS RF Data Fusion Proposal — MODU INDUSTRIES LTD.</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; margin: 2rem auto; max-width: 62rem; padding: 0 1rem; color: #1a1a1a; line-height: 1.45; }
+  h1 { font-size: 1.35rem; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.05rem; margin-top: 2rem; }
+  .pub { color: #444; margin-top: 0; }
+  table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+  th, td { border: 1px solid #bbb; padding: 0.45rem 0.55rem; text-align: left; vertical-align: top; font-size: 0.92rem; }
+  th { background: #f0f0f0; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.8rem; word-break: break-all; }
+  .status { white-space: nowrap; }
+  footer { margin-top: 2.5rem; color: #444; font-size: 0.9rem; border-top: 1px solid #bbb; padding-top: 0.75rem; }
+</style>
+</head>
+<body>
+
+<h1>Evidence — IDEaS RF Data Fusion Proposal</h1>
+
+<p class="pub"><strong>Published by MODU INDUSTRIES LTD. (BC1549916), West Kelowna, British Columbia, Canada.</strong> Proposal to the IDEaS <em>RF Data Fusion for Command and Control</em> challenge (CFP 006, solicitation W7714-248676/0NN), Component 1b — Design.</p>
+
+<h2>Who MODU is</h2>
+
+<p>MODU INDUSTRIES LTD. is a British Columbia company, solely owned and directed by Jason Martin Vetter, working from its laboratory in West Kelowna, BC. MODU builds a local-first AI and device-orchestration platform — governed, auditable work across computers, phones, local models, and connected services — and applies it in applied AI, sovereign/private systems, RF and cyber research, and public-sector R&amp;D. All labour on this proposal is performed in Canada.</p>
+
+<p>A distinction held throughout the proposal and on this page: <strong>the platform is TRL 6; the proposed solution is claimed at TRL 4.</strong> The evidence below supports the TRL 4 claim — components built and validated in MODU's laboratory — and no higher claim is made anywhere on this page.</p>
+
+<h2>The proposal</h2>
+
+<p>The proposed solution is the <strong>Sovereign Fusion Layer (SFL)</strong>: bearer-agnostic middleware that ingests domain data arriving over tactical RF bearers, normalizes it into a canonical, standards-aligned information model, fuses and prioritizes it, and emits and consumes structured exchanges in MTF-XML, NIEM and NCDF formats — for operation in denied, degraded, intermittent and low-bandwidth (DDIL) conditions. SFL does not yet exist as an integrated system; its components do. Component 1b designs the integrated system and demonstrates an integrated prototype in a simulated bearer environment (exit TRL 5). <strong>Total price: CAD $1,075,000</strong> (Component 1b cap $1,500,000; profit cap $161,250).</p>
+
+<h2>Capability claims and their evidence</h2>
+
+<p>Each claim below is stated in the bounded wording the proposal carries. The artefact column names the proving record; hashes for artefacts already held are printed in the artefact index (§3). Artefacts marked <em>added 2026-10-22</em> are retained on build day and published at go-live.</p>
+
+<p><strong>1. Receiver clock-bias solver — measured on recorded data.</strong> On the retained 2026-10-12 GNSS capture (266 epochs, 11,049 measurements), the solver reduced the pooled median absolute Doppler residual from <strong>1,221.3 Hz to 17.4 Hz</strong>. A companion record attributes the corrected p90 tail (≈340 Hz) to estimator construction (≈324 Hz), prediction and timing terms, and a ≈2 Hz floor; a fractional-domain (ppm) estimator variant was prototyped and validated on held-out data (p90 15.6 Hz; both pre-stated kill criteria passed; guard floor 454 Hz stated). <em>Artefacts: three measurement records, held here with SHA-256 hashes (pack files <code>23</code>, <code>24</code>, <code>26</code>). The retained capture date (2026-10-12) falls inside the span of the published catalogue snapshot cited at claim 3. Census (2026-10-20): the solver code was located in the estate (modu-rf-lab working tree, <code>tools/ghost-sat/gnss_doppler.py</code> + <code>clock_correct.py</code>) and the census restates this measurement from the same retained records — <code>~/workspace/wren/rf-estate-census-20261020.md</code> §2.</em></p>
+
+<p><strong>2. Receive-only RF ingest, by construction.</strong> MODU's RF practice is receive-side. The ingest discipline runs on a receive-only RF broker (the receive-only RF broker specified by its manifest — 10 allowlisted receive-only operations, <strong>no transmit primitive by construction</strong>; 41 of 41 checks — re-created harness run, 2026-10-17; version 1 built 2026-10-20 compiles in the six read operations and is device-proven — see below) and raw GNSS/sensor pipelines (9,256 raw GNSS measurements in a single quality-gated capture).</p>
+
+<p><strong>On 2026-10-20 the broker itself was built and proven on the device.</strong> Version 1 is a one-shot tool — invoked per call under root, nothing resident, no listening socket — compiling in exactly six of the manifest's ten allowlisted operations, all of them reads (get_magic, get_version, get_channel, get_radio, get_promisc, get_monitor). The manifest's three SET operations and its sample operation are <strong>not compiled in at all</strong>: they exist in the source as refused names only, so the no-transmit property is a property of the binary, not of a setting. Every call passes a canary discipline (the magic/version pair is re-read before any other operation is issued; on mismatch or failure the operation is refused and the refusal recorded). On the live device, under restored root, all six reads executed and answered — the channel read back as 44, agreeing at the same minute with the live association's 5220 MHz — and a hostile-name batch (SET names, raw opcode numbers, path-shaped names) was refused 8 of 8 before any driver call was made. The broker ships as a Magisk module (<code>modu-bcm4390-rx-broker</code>), installed with its rollback rehearsed (remove + reinstall from the same package, state verified at each step). The ZSAT fabric's registry validates the backend <strong>live, from measured values</strong> — evidence state <code>LIVE_BEHAVIOR_MATCH</code>, registry read 2026-10-20T10:22:13Z carrying magic 0x14e46c77, version 2, channel 44, radio 0, promisc 0, monitor 0. Host test suite for the broker: 5 of 5, plus the branch's manifest/probe tests 2 of 2; the branch's full suite ran 445 passed with 2 failures reproduced identically on the pre-build tree (environmental, not regressions). <em>Artefacts: the broker manifest (<code>config/zsat/pixel9_bcm4390_rx_broker.json</code> — the ten allowlisted operations as configured) and its test suite (<code>tests/test_zsat_pixel9_bcm4390_rx_broker.py</code>), held in the estate's RF convergence worktree and located by the 2026-10-20 RF census (<code>~/workspace/wren/rf-estate-census-20261020.md</code> §3); the BCM4390 read-only probe record (estate record <code>~/workspace/bcm4390-probes-20261009.md</code>) — the same receive-only discipline proven on-device 2026-10-09 (WLC_GET_</em> reads only; no SET opcodes in the probe manifest) and re-proven 2026-10-20 under restored root, when the probe's two reads returned their first privileged answers (WLC_GET_MAGIC and WLC_GET_VERSION, both rc=0; the stock runs of August 2026 had returned errno 13; probe source audited read-only — estate record <code>~/workspace/wren/rf-deep-branch-characterization-20261020.md</code>, Step-3 addendum); the broker source (<code>scripts/modu_bcm4390_rx_broker.c</code>) and its unit-test output — <strong>landed early, 2026-10-20</strong>, on branch <code>wren/p9-dongle-broker-20261020</code> in the estate's RF repository, with its build record (<code>~/workspace/wren/p9-dongle-build-20261020.md</code>); the GNSS capture manifest — added 2026-10-22. The same discipline is implemented at the phone's satellite-service boundary: a custom binder client expressing exactly one read-only transaction (code 31; statically verified — a single transact site, code 31 only) with its injection module. That instrumentation is now proven on its one transaction path: on 2026-10-20, with root restored on the device, the module — rebuilt after its original build was proven never to have loaded on-device (a dynamic dependency on a runtime library the phone does not carry; the rebuild links it statically) — was verified live inside the satellite service, and the proof transaction executed on the live device: <code>transact(31 requestIsRilConnected) -&gt; true</code>, <code>RESULT requestIsRilConnected = true</code>, the service admitting client uid 10511 as service uid 10248, with no SecurityException raised (binder record <code>~/workspace/p9-satellite-binder-client-20261016.md</code>; execution record <code>~/workspace/wren/p9-root-restore-execution-20261020.md</code>, FLIGHT 7; census §3).*</p>
+
+<p><strong>3. A production catalogue pipeline — the pattern SFL generalizes.</strong> The ingest discipline maintains a live catalogue of satellite observations, each normalized against TLE/ephemeris models under a canonical data model with freshness tagging — stale data is tagged, never used silently. That is the engineering pattern the proposed solution generalizes from the space domain to message standards. <em>Live read (2026-10-21): the catalogue is flowing. Read live from the production store on 2026-10-21 (07:03 PDT), it holds <strong>940,848 observations over 103 GNSS satellites</strong> (GPS 32 · GLONASS 24 · BeiDou 31 · Galileo 16), spanning 2026-10-10T03:03:49Z → 2026-10-21T14:00:20Z. The pipeline's verdict mix at the same read: 84.6% CONSISTENT, and 1,323 GHOST_CANDIDATE rows across 36 NORAD ids. Collection was interrupted on 2026-10-18 and 2026-10-19 — the collection handset was dark through an operating-system update and the resulting loss of its instrumented state, restored 2026-10-20 — so those two days hold no rows; the gap is stated here rather than smoothed over. The live count is re-read again on submission day and quoted with its read date.</em> <em>Public snapshot (added 2026-10-20): the frozen snapshot of this catalogue — 2026-10-10 → 2026-10-17 (UTC), 797,239 observations over 103 GNSS satellites (GPS 32 · GLONASS 24 · BeiDou 31 · Galileo 16), per-epoch Doppler residuals with the pipeline's verdict mix (83.8% CONSISTENT; 1,323 GHOST_CANDIDATE rows across 36 NORAD ids) and its methods note — is published under CC-BY-4.0 at <a href="https://github.com/J2theN1/modu-ghost-catalogue/releases/tag/v1.0.0">https://github.com/J2theN1/modu-ghost-catalogue/releases/tag/v1.0.0</a> (SHA-256 manifest re-verified download-side after release). This is the public snapshot of the catalogue this claim describes, open to any evaluator; it is not the submission figure — the live count is re-read on Oct 22 and again on submission day, per the bracket above.</em> <em>Census verification (2026-10-20): an independent estate census recomputed the catalogue store live — 797,239 rows over 103 satellites, byte-consistent with this published snapshot (<code>~/workspace/wren/rf-estate-census-20261020.md</code> §2).</em></p>
+
+<p><strong>4. Tested, audited substrate.</strong> The platform the design builds on is measured, not asserted: deterministic orchestration with sub-100 ms dispatch; retrieval-augmented answering end-to-end at 0.19 s on the reference node; a <strong>2,923-test release gate at zero failures</strong>; and a full-estate audit (133,782 lines, 398 files) with zero critical findings. <em>Artefacts: the release-gate run output — added 2026-10-22. Platform figures as stated in the proposal (pack file <code>05</code>).</em></p>
+
+<p><strong>5. On-device retrieval — measured, with its record stated honestly.</strong> The proposal's MC-1 states a corrected top-hit cosine range of <strong>0.39–0.46</strong> (measured values 0.4216 / 0.3919 / 0.4635; the retriever ranked first on every proof query, 3 of 3). The measurement's retained record is published here. <em>Artefact: the fix-verification record of 2026-10-12 — added 2026-10-22. [Editor action, Oct 22, file <code>30</code> Step 6 / register G-9: publish that record, or the range comes out of MC-1 under vault X5's stated fallback. The earlier ingest report does NOT carry these figures and is not published as their proof — pack file <code>33</code> §1 E-1.]</em> <em>Substrate measurement (added 2026-10-24): the retrieval model's serving path was measured live on the same device on 2026-10-24: an embedding job submitted through the same job daemon returned a 384-dimension vector from the MiniLM-L6 int8 model with the device's Edge TPU named in the result record as the executing backend, in <strong>93.4 ms</strong> end-to-end, on-device tokenization included in that figure. This evidences the substrate's live execution and latency only; claim 5's accuracy figures remain carried solely by the retained fix-verification record (file <code>34</code>).</em></p>
+
+<p><strong>6. Prioritization under a degraded link — worked example, assumptions stated.</strong> The proposal's Scenario B (300 bit/s bearer) compares a plain first-in-first-out baseline against the proposed prioritization policy on identical traffic: FIFO ≈927 s (≈1.5 contact windows) vs policy ≈178 s (≈0.30 window) to deliver the top precedence band. <em>Artefact: the Scenario B rebuild, held here with SHA-256 hash (pack file <code>18</code>) — every assumption stated in the artefact. [Conditional: this section stands only if the Oct 21 session adopts the rebuild (decision D-B4); under the fallback the section is withdrawn at go-live.]</em></p>
+
+<p><strong>7. Canadian content — worksheet-backed.</strong> The proposal's certifications are computed from a retained Canadian Content worksheet, published here; the figure stated in the proposal text is the worksheet figure as computed when its origin checks close. <em>Artefact: the worksheet, held here with SHA-256 hash (pack file <code>13</code>). [Editor action, Oct 22: re-copy from the worksheet's final build-day state and re-hash before go-live — file <code>33</code> §4 step 3.]</em></p>
+
+<p><strong>8. Integrity position — dated list checks.</strong> Dated search records against the FCP Limited Eligibility to Bid list, for MODU INDUSTRIES LTD. and for each named first-tier subcontractor, are published here at go-live; the proposal's certification speaks only for entities actually checked. <em>Artefacts: the dated capture records — created and added 2026-10-22.</em></p>
+
+<p><strong>9. RF reference practice — a working satellite/RF corpus.</strong> In support of the ingest claims above, MODU maintains a searchable RF/satellite reference corpus built from official sources only (GNU Radio documentation, SatNOGS, CelesTrak, ISED spectrum publications): <strong>9,699 unique chunks over 1,015 pages, snapshot 2026-10-19</strong>, held as a local index with a command-line search face; 6 of 7 pre-stated proof queries pass on both index layers (the one partial is a source-access limit, named in the build record). <em>Artefact: the corpus build record of 2026-10-19 (estate record <code>~/workspace/rf-corpus-build-20261019.md</code>; a copy is added to this page at go-live if the proposal's references cite it). Census-verified 2026-10-20, composition: GNU Radio documentation 7,062 chunks · CelesTrak/SGP4 1,002 · ISED 841 · SatNOGS 794 (<code>~/workspace/wren/rf-estate-census-20261020.md</code> §5).</em></p>
+
+<p><strong>10. NTN modem reverse engineering — the satellite bearer, taken apart offline.</strong> MODU has reverse-engineered the Pixel 9's Shannon 5400 NTN modem firmware (94 MB image, build g5400e-250605) entirely offline: the image's section table parsed (BOOT / PSP / MAIN / APM / VSS / DBGCORE / INFO present; the RF-configuration and NV stores proven to load separately and absent from the image), the NTN band tables (N255 / N256) extracted exactly as tabled against 3GPP, <strong>15 modem IPC commands and the AT command set mapped</strong> (+NTNSATCFG, +NTNMETRIC, +NTNTEST, +SKYLOTEST among them), the Skylo satellite-service feature gates and NV items named, and the S5511 RF front end (MIPI RFFE) mapped. The same work established where the satellite-service access gate sits: no "731" exists on the modem side — <strong>the gate is on the application-processor side</strong> — the finding the ground-side instrumentation cited at claim 2 is built on. That instrumentation has since made the one live contact this analysis pointed to: on 2026-10-20 its injection module was verified live inside the satellite service process, and its single read-only transaction (code 31, requestIsRilConnected) executed on the device and answered <code>true</code>. The answer is a service-level RIL-connection state, returned from the service's own cached state; the proof client of that pass could express no other transaction, and nothing was transmitted (claim 2; execution record <code>~/workspace/wren/p9-root-restore-execution-20261020.md</code>, FLIGHT 7). As far as the modem is concerned this remains completed offline analysis, evidenced in retained records: no modem function was invoked by the reverse engineering.</p>
+
+<p><strong>The same instrumentation has since reached the modem itself — at the request layer, and only there.</strong> On 2026-10-20, after source-level characterization established that creating the satellite service provider is construction plus inert arming only (no RIL request, no registration, no callback), the client created the provider (ISatellite code 1) and — inside a single held binding, the provider being torn down when its creator unbinds — issued the one-shot modem-metric request (code 22) twice, as (true, 1) and (false, 1). Both requests executed the full chain to the modem: RIL request 731 was issued (clientId 8, serials 3 and 4, slot 0) and answered by the modem in 58 ms and 52 ms respectively, each with the bare completion event and no payload. <strong>The request layer is therefore proven end-to-end, including the modem's own answer.</strong> Across the 100-second observation window the modem returned no metric data — zero 9706 indications — and none was expected: no NTN session exists on this device to generate metric events, so <strong>the metric-data leg is unproven</strong> and is not claimed. The request's argument semantics were narrowed by the two calls' symmetric behaviour toward the framework's (reset, transactionId) reading; that remains an inference, stated as one. Nothing was transmitted over any bearer, and no NTN link is established or claimed (execution record <code>~/workspace/wren/p9-root-restore-execution-20261020.md</code>, FLIGHT 9). <em>Artefacts: the modem RE record (estate record <code>~/workspace/lane2-modem-ntn-20261010.md</code>) and its companion analyses (Legion pixel-9-lab records of 2026-10-09/10: modem firmware, RF floor truth, BCM4390 emulation, BCM4390 HCI RE, AOSP antenna/RF); the RF front-end map (<code>config/zsat/pixel9_rf_frontend_map.json</code>, estate RF convergence worktree); estate RF census of 2026-10-20 (<code>~/workspace/wren/rf-estate-census-20261020.md</code> §3); the root-restore and crossing execution record of 2026-10-20 (<code>~/workspace/wren/p9-root-restore-execution-20261020.md</code>, FLIGHT 7) for the executed transaction; the root-restore and crossing execution record of 2026-10-20, FLIGHT 9 (same file) for the provider creation and the modem-answered metric pair.</em></p>
+
+<p><strong>11. On-device generative inference — MODU's own models, MODU's own stack.</strong> On 2026-10-24, on the laboratory Pixel 9 (device identity verified against the estate record before any act; current post-update build), MODU's on-device job daemon served a generative completion from MODU's own model file — Qwen3-0.6B int4, in LiteRT-LM format — through MODU's own serving stack (job daemon → LiteRT-LM server): the test prompt was answered in <strong>4,670 ms</strong> end-to-end, and the completion is retained verbatim in the proving record. No cloud service, and no device-vendor AI service, is used anywhere in this path; the model files, the daemon and the servers are MODU's own, held on the device. This is a single-prompt capability proof from one laboratory session. It is not an accuracy or quality benchmark, and it evidences no always-on service: the daemon was started for the session and its restart persistence is unproven (see "What is not claimed"). <em>Artefacts: the own-models live-test record of 2026-10-24 (estate record <code>~/workspace/wren/p9-own-models-20261024.md</code>) — health record, job record and result record quoted verbatim at its §3. Added 2026-10-24; held in the estate pending adoption.</em></p>
+
+<p>The accelerator execution cited above is accounted, not merely asserted. The delegate partition for the same MiniLM-L6 int8 model under the device's NNAPI neural-network delegate was measured on 2026-10-09/10: <strong>69 of 292 nodes delegated, in 7 partitions</strong>; the estate benchmark record's analysis of that partition attributes <strong>≈97% of the model's multiply-accumulate operations</strong> to the delegated portion (23.6% by node count — the two metrics are stated together wherever either is used). Steady state measured <strong>≈57 ms</strong> accelerator inference, <strong>≈73 ms</strong> end-to-end, <strong>12.7 requests/s</strong> sequential and <strong>17.0 requests/s</strong> at 5-way parallel. These figures predate the device's October system update; the post-update live execution is the 2026-10-24 job recorded at claim 5. <em>Artefacts: the specs annex of 2026-10-24 (estate record <code>~/workspace/wren/p9-specs-annex-20261024.md</code> §2.1), compiling the estate's embed-server record (<code>embed-server-20261009.md</code> §1/§3) and benchmark record (<code>p9-ai-benchmark-20261010.md</code> §1), held in the P9 goal corpora.</em></p>
+
+<p><strong>12. Below-HAL device interfaces — recovered from public source, executed live.</strong> The complete programming interface of the laboratory device's DSP coprocessor driver — <strong>44 interface calls</strong> — was recovered from the vendor's published kernel source and verified call by call against the driver binary shipped on the device. On 2026-10-10 two read-only interface calls were executed live on the device, returning the block's specification from the hardware itself: <strong>3 DSP cores, MCU mode, driver interface version 1.33</strong>. The coprocessor surface was re-confirmed present on the device's current build on 2026-10-24. One command-payload format inside the interface remains unrecovered, and no below-HAL command submission is claimed (see "What is not claimed"). <em>Artefacts: the specs annex of 2026-10-24 (estate record <code>~/workspace/wren/p9-specs-annex-20261024.md</code> §2.2), compiling the estate's GXP below-HAL record (<code>gxp-below-hal-20261009.md</code>); device-surface re-confirmation in the E1 census of 2026-10-24 (<code>~/workspace/wren/p9-e1-census-20261024.md</code>).</em></p>
+
+<h2>What is not claimed</h2>
+
+<ul>
+<li><strong>No HF work exists in this estate and none is claimed.</strong> MODU's RF practice is receive-side satellite work; the proposal claims measurement <em>discipline</em>, not HF measurement practice.</li>
+<li>No MTF-XML, NIEM or NCDF message set has been implemented yet; no integrated fusion prototype exists; no component has been tested on a live tactical bearer. Those are precisely the Component 1b design tasks.</li>
+<li>The catalogue figure is re-read live at integration and on submission day and quoted with its read date (see claim 3). No figure on this page is carried forward from an earlier draft without a dated read behind it.</li>
+<li>The published catalogue snapshot (claim 3) is a frozen reference dated 2026-10-10 → 2026-10-17; it evidences the catalogue capability and is never quoted as the submission's catalogue figure.</li>
+<li><strong>No operational NTN link is claimed.</strong> The modem evidence (claim 10) is offline reverse engineering of a firmware image; MODU's satellite instrumentation is ground-side and receive-only. The single executed satellite-service transaction (claims 2 and 10) is application-processor IPC answered from the service's cached state — it is not bearer traffic and establishes no link. No traffic has been sent or received over an NTN bearer, and no RF has been transmitted in any of the work evidenced on this page.</li>
+<li><strong>The binder instrumentation is proven to the extent executed, and no further.</strong> On 2026-10-20 the satellite-service instrumentation executed: one read-only state query (code 31, answered <code>true</code> from the service's cached state); one provider construction (code 1, characterized beforehand as construction and inert arming only); and two one-shot modem-metric requests (code 22) that reached the modem and were answered by bare acknowledgement with no data. No metric data has ever been received, no other satellite-service behaviour is evidenced, and none of it is bearer traffic or an NTN capability (execution record <code>~/workspace/wren/p9-root-restore-execution-20261020.md</code>, FLIGHTS 7 and 9).</li>
+<li><strong>The on-device AI evidence (claims 5 substrate, 11, 12) is single-session laboratory measurement on MODU's own stack.</strong> No device-vendor AI service is used or claimed for any capability on this page; the generation and embedding evidenced here run on MODU's own model files through MODU's own serving stack. The job daemon's persistence across device restarts is unproven, its model selection is not pinned (the completion at claim 11 was served by the model named in its record, which is not the registry's default), and its retrieval-search job type was down during the 2026-10-24 session and is not evidenced by that session.</li>
+<li><strong>The below-HAL evidence (claim 12) is interface recovery plus two read-only executions, and only that.</strong> The 48-byte command payload format inside the driver's mailbox structure remains unrecovered; no below-HAL command was submitted to the coprocessor in any work evidenced on this page, and no accelerator workload is claimed to run through that interface. (The accelerator workloads evidenced on this page run through the device's standard neural-network delegate — claims 5 and 11.)</li>
+</ul>
+
+<p><em>MODU INDUSTRIES LTD. · West Kelowna, British Columbia, Canada. Hashes in the artefact index are SHA-256, computed over the files as held on this page.</em></p>
+
+<h2>Artefacts</h2>
+<p>The artefacts named in the claims above are indexed below. Each artefact marked <em>Held here</em> is published on this page at the link shown, with the SHA-256 hash of the file as held here.</p>
+<table>
+<tr><th>Artefact</th><th>Claim supported</th><th>SHA-256</th><th>Status</th></tr>
+
+<tr>
+<td><a href="artefacts/13-canadian-content-worksheet-20261015.md">Canadian Content Worksheet + Price-Certification Basis (2026-10-15)</a></td>
+<td>Vault row X1 re-home — the Canadian Content worksheet figure stated in the proposal&rsquo;s Certifications / PRC-7 text, computed from this worksheet when its origin checks close.</td>
+<td><code>aebe2f3e2c374cd3cde374ce2dbadf5080df8780b57da70afd027b15e09a38f0</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/18-scenario-b-rebuild-20261016.md">Scenario B Rebuild — worked-example arithmetic with every assumption stated (2026-10-16)</a></td>
+<td>Vault row X6 re-home — the rebuilt Scenario B figures (300 bit/s: FIFO &asymp;927 s &asymp; 1.5 windows; policy &asymp;178 s &asymp; 0.30 window) carried in the proposal&rsquo;s PRC-2(a) / Scenario B text.</td>
+<td><code>8019f68fd06d272dec265285ab9f3f4f7de069b2ac25a43b565d342cd4b89295</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/23-clock-bias-solver-replay-20261016.md">Clock-Bias Solver: measured delta on recorded data (offline replay, 2026-10-16)</a></td>
+<td>Evidence-map row C3 — first-hand measurement of the receiver clock-bias solver on the retained 2026-10-12 GNSS capture (266 epochs, 11,049 measurements).</td>
+<td><code>4bc663becbd63058198a85757adba8f8f61fdc9401ba9b9c22c4930b039cc202</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/24-solver-tail-attribution-20261016.md">Clock-Bias Solver: tail attribution (companion measurement record, 2026-10-16)</a></td>
+<td>Evidence-map row C3 — decomposition of the solver&rsquo;s corrected residual tail on the same capture.</td>
+<td><code>d44e4a3c23c49c7860641eecdc0fc083144c3e5a43c24b1f515f605d57c58d1f</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/26-clock-bias-ppm-estimator-prototype-20261016.md">Clock-Bias Solver: fractional-domain (ppm) estimator, prototyped and validated (2026-10-16)</a></td>
+<td>Evidence-map row C3 — validation record for the fractional-domain estimator variant measured on retained captures.</td>
+<td><code>025e9ecd2ede205e03c05a9fe6052e0e34921a9fe3542bb572b25de1e7907f82</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/34-x5-fix-verification-retained-20261017.md">On-device retrieval fix-verification record (retained, 2026-10-17)</a></td>
+<td>Vault row X5 re-home — the corrected top-hit cosine range 0.39&ndash;0.46 and the ranked-first result (3 of 3 proof queries) stated in MC-1. This retained record is the row&rsquo;s proof artefact; no ingest report is published for this row.</td>
+<td><code>f364298759ac7be92f3002248566e6624423580fea8d05ebf627e4d921acd736</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td>Assembled proposal text, v2 (retained build artefact)</td>
+<td>Vault row X8 re-home — the retained, re-measured text whose character landings the proposal&rsquo;s fields carry.</td>
+<td>&mdash;</td>
+<td>Not yet held — no assembled-text artefact exists yet; this slot is filled when the proposal text is assembled and the assembled text is retained.</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/45-g4-cost-build-b10-b11-20261025.md">Cost build — rate substantiation and embedded-profit computation (2026-10-25)</a></td>
+<td>Vault row X2 re-home — the computed embedded profit against the $161,250 cap and the rate-substantiation summary stated in PRC-7.</td>
+<td><code>45b3e53e97c2f76314ead5636d3936450cb99c259f68d1120040d3e3aecd1ea9</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td>FCP Limited Eligibility to Bid list search record — MODU INDUSTRIES LTD. (dated)</td>
+<td>Vault row X4 re-home — the dated list check behind the proposal&rsquo;s integrity certification for MODU INDUSTRIES LTD.</td>
+<td>&mdash;</td>
+<td>Not yet held — MODU&rsquo;s own dated list-check record is captured with the submission capture round (pack file 30, Step 6). The first-tier subcontractor records of 2026-10-25 are held in the following row.</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/43-g9-followthrough-addendum-20261025.md">Integrity / FCP list search records — named first-tier subcontractors (dated 2026-10-25)</a></td>
+<td>Vault row X4 re-home — the dated list checks (PSPC Ineligible and Suspended Suppliers list; FCP Limited Eligibility to Bid list) behind the proposal&rsquo;s integrity certification for each named first-tier subcontractor, run 2026-10-25; a second capture round is run at submission.</td>
+<td><code>2f3b96836332a6ae78b08485eb2eb73c8cd1a53eedf4efaba3d2be3c78f20e4d</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/B2-union-gate-final-gate-20261012.log">October release union gate — test output (2,923 tests)</a></td>
+<td>Vault row B2 — the gate run record behind the proposal&rsquo;s test-count figure.</td>
+<td><code>cd213c93d572ed7d15ccc4cbfd3e32e51657bf3e8d0486c39e728ef36683d583</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td>Tokenizer differential-test run output (1,125 tests)</td>
+<td>Vault row B5 — the differential-test record behind the proposal&rsquo;s tokenizer figure.</td>
+<td>&mdash;</td>
+<td>No artefact — no run output exists for this row; the proposal&rsquo;s 1,125-test figure is labelled SINGLE-SOURCE (value-class labels, pack file 29 &sect;5; label applied at go-live under the G-3 adoption, 2026-10-25).</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/B7-modu-bcm4390-rx-observerd.c">RF broker source</a> + <a href="artefacts/B7-host-test-rerun-output-20261017.log">unit-test output (41 of 41 checks — re-created harness run, 2026-10-17)</a>; also held: <a href="artefacts/B7-README-rx-broker.md">README</a>, <a href="artefacts/B7-test_rx_broker_main-recreated-20261017.c">re-created harness source</a>, <a href="artefacts/B7-Makefile-rx-broker-recreated-20261017">Makefile</a></td>
+<td>Vault row B7 — the source and test record behind the proposal&rsquo;s receive-only RF broker figures. The 41-of-41 figure is the retained 2026-10-17 re-created-harness run; no other test count is claimed for this row.</td>
+<td>source <code>9d5843ed86d0bfdf3ba6ad7f9376ab2c100f1305ebe8723687b1aaa0e3bde7d2</code><br>test output <code>00f47eab312dc39a59d72d2c99feb647a9fa5e6ce78e6423f97a73724e4ff0ec</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/B8-phonelab-capture-report-20261012T194749Z.json">GNSS capture manifest</a> / <a href="artefacts/B8-phonelab-gnss-20261012_124751.summary.json">count record</a> (capture 20261012T194749Z); also held: <a href="artefacts/B8-phonelab-gnss-20261012_124625.summary.json">GNSS summary (124625)</a>, <a href="artefacts/B8-phonelab-sensors-20261012_124751.summary.json">sensors summary</a></td>
+<td>Vault row B8 — the capture record behind the proposal&rsquo;s raw GNSS measurement count.</td>
+<td>count record <code>97f3e5f49782cf20549571eb4c172d4292553d15d387674d53dffb2d4ef14215</code><br>manifest <code>cf8afdf4cfdc5f67b22c4d27d34fe157dab7ae902bc77e1bbddbeb73306271c6</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/C6-ghost_watch.py">Change-only journal artefact (RF lab)</a>; also held: <a href="artefacts/C6-test_ghost_journal.py">its test</a>, <a href="artefacts/C6-ghost_watch.py.bak-ghost-journal-changeonly-20261012">pre-change backup</a></td>
+<td>Vault row C6 — the artefact behind the proposal&rsquo;s change-only updating precedent.</td>
+<td><code>85abf6abbc6e57f86ee0f674b8633e3e78078901eef1cfa428a9e246b90b6643</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td>Public references for non-HF bearer characterizations</td>
+<td>Vault row X7 re-home (public-source path) — the published sources for the LF/VLF, UHF, and SATCOM characterizations, if that path is taken; otherwise the characterizations are re-labelled in the proposal text as stated design assumptions and no artefact is published for this row.</td>
+<td>&mdash;</td>
+<td>No artefact — by disposition: the public-reference path was not taken; the characterizations are carried in the proposal text re-labelled as stated design assumptions (vault row X7).</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/p9-own-models-20261024.md">On-device AI live-test record — MODU&rsquo;s own models (2026-10-24)</a></td>
+<td>Claims 11 and 5 (substrate) — on-device generative completion from MODU&rsquo;s own Qwen3-0.6B model file through MODU&rsquo;s own serving stack on the laboratory Pixel 9, 4,670 ms end-to-end, output retained verbatim in the record; and the Edge TPU embedding of the retrieval model through the production daemon, 384-dimension output, 93.4 ms end-to-end (2026-10-24).</td>
+<td><code>39c3bdc0ecfbb5d9a566fb4af451ba5c2d19eb7090b15137a6159647b0164a6b</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/p9-specs-annex-20261024.md">Pixel 9 specs annex, &sect;2.1&ndash;&sect;2.2 (2026-10-24)</a></td>
+<td>Supporting measurement for claims 5 and 11 — the MiniLM-L6 int8 delegate partition (69 of 292 nodes, 7 partitions; &asymp;97% of MACs by the benchmark record&rsquo;s analysis) and its measured throughput, 2026-10-09/10; and claim 12 — the 44-call GXP interface recovery and its two live read-only executions of 2026-10-10 (3 DSP cores, MCU mode, driver interface version 1.33).</td>
+<td><code>d24d725ffc1a42b30790ef6f99600d7bfad0f504e273f5e8e3137af04a3ddcc1</code></td>
+<td class="status">Held here</td>
+</tr>
+
+<tr>
+<td><a href="artefacts/p9-e1-census-20261024.md">Pixel 9 device census (2026-10-24)</a></td>
+<td>Continuity of the device evidence at claims 2, 5 and 10 — the laboratory Pixel 9 identity-verified against the estate record and censused on its current post-update build (CP3A.261005.005) on 2026-10-24, as the claims&rsquo; records describe; and the claim 12 coprocessor-surface re-confirmation.</td>
+<td><code>c8ee36fa85930bf156a64aed4b42b1ef20267e2e41071626c220c4839f030f3b</code></td>
+<td class="status">Held here</td>
+</tr>
+
+</table>
+
+<footer>
+MODU INDUSTRIES LTD. &middot; West Kelowna, British Columbia, Canada.<br>
+Page built 2026-10-25 from the content adopted 2026-10-24. Hashes are SHA-256, computed over the files as held here.
+</footer>
+
+</body>
+</html>

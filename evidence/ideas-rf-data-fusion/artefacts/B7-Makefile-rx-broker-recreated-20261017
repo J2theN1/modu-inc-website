@@ -1,0 +1,24 @@
+# Makefile — rx-broker host tests.
+#
+# RE-CREATED 2026-10-17 by Wren. The original Makefile named in
+# README-rx-broker.md is absent (IDEaS pack file 31, row B7); this is a
+# re-creation, not the original.
+#
+# The harness #includes the daemon source (its dispatch and broker
+# state are static), so the test binary builds from the harness
+# translation unit alone; the daemon .c is a build dependency.
+
+CC      ?= gcc
+CFLAGS  ?= -O1 -g
+TESTDEF  = -DRX_BROKER_TEST_BACKEND
+
+test: rx_broker_test_host
+	./rx_broker_test_host
+
+rx_broker_test_host: modu-bcm4390-rx-observerd.c test_rx_broker_main.c
+	$(CC) $(CFLAGS) $(TESTDEF) -o $@ test_rx_broker_main.c
+
+clean:
+	rm -f rx_broker_test_host
+
+.PHONY: test clean

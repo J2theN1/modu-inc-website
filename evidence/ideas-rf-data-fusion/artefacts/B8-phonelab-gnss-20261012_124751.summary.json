@@ -1,0 +1,208 @@
+{
+  "accumulated_delta_range_m": {
+    "count": 9256,
+    "max": 2273748.4004996386,
+    "mean": 89462.54956466873,
+    "median": 10809.106922853945,
+    "min": -9710791.393748116
+  },
+  "carrier_frequency_hz": {
+    "beidou": {
+      "count": 3755,
+      "max": 1575420032.0,
+      "mean": 1403727669.3816245,
+      "median": 1561097984.0,
+      "min": 1176450048.0
+    },
+    "galileo": {
+      "count": 5772,
+      "max": 1575420032.0,
+      "mean": 1387132742.2536383,
+      "median": 1575420032.0,
+      "min": 1176450048.0
+    },
+    "glonass": {
+      "count": 2844,
+      "max": 1604812544.0,
+      "mean": 1601600477.5246131,
+      "median": 1602000000.0,
+      "min": 1598062464.0
+    },
+    "gps": {
+      "count": 5406,
+      "max": 1575420032.0,
+      "mean": 1416304366.9049203,
+      "median": 1575420032.0,
+      "min": 1176450048.0
+    },
+    "qzss": {
+      "count": 486,
+      "max": 1575420032.0,
+      "mean": 1373472262.3209877,
+      "median": 1176450048.0,
+      "min": 1176450048.0
+    },
+    "sbas": {
+      "count": 216,
+      "max": 1575420032.0,
+      "mean": 1575420032.0,
+      "median": 1575420032.0,
+      "min": 1575420032.0
+    }
+  },
+  "cn0_db_hz": {
+    "beidou": {
+      "count": 3755,
+      "max": 45.27000045776367,
+      "mean": 37.43516832439306,
+      "median": 37.869998931884766,
+      "min": 3.879999876022339
+    },
+    "galileo": {
+      "count": 5772,
+      "max": 45.56999969482422,
+      "mean": 31.377878830817863,
+      "median": 30.770000457763672,
+      "min": 3.879999876022339
+    },
+    "glonass": {
+      "count": 2844,
+      "max": 43.95000076293945,
+      "mean": 30.015611105327366,
+      "median": 28.549999237060547,
+      "min": 18.94999885559082
+    },
+    "gps": {
+      "count": 5406,
+      "max": 50.56999969482422,
+      "mean": 36.21051730097024,
+      "median": 35.869998931884766,
+      "min": 3.879999876022339
+    },
+    "qzss": {
+      "count": 486,
+      "max": 27.970001220703125,
+      "mean": 23.04489676550092,
+      "median": 27.270000457763672,
+      "min": 17.25
+    },
+    "sbas": {
+      "count": 216,
+      "max": 40.54999923706055,
+      "mean": 37.23796275809959,
+      "median": 39.349998474121094,
+      "min": 33.849998474121094
+    }
+  },
+  "constellation_record_counts": {
+    "beidou": 3755,
+    "galileo": 5772,
+    "glonass": 2844,
+    "gps": 5406,
+    "qzss": 486,
+    "sbas": 216
+  },
+  "event_counts": {
+    "collector_start": 1,
+    "collector_stop": 1,
+    "gnss_agc": 1735,
+    "gnss_first_fix": 1,
+    "gnss_started": 1,
+    "hidden_api_correlation_enable": 1,
+    "location_fix": 179,
+    "measurement_status": 1,
+    "nav_message": 999,
+    "nav_status": 1,
+    "nmea": 8512,
+    "raw_measurement": 9256,
+    "receiver_clock": 181,
+    "registration_status": 1,
+    "satellite_status": 9223
+  },
+  "nmea_sentence_counts": {
+    "GAGSV": 814,
+    "GBGSV": 810,
+    "GIGSV": 180,
+    "GLGSV": 360,
+    "GNGGA": 180,
+    "GNGLL": 180,
+    "GNGSA": 1185,
+    "GNRMC": 180,
+    "GNVTG": 180,
+    "GPGSV": 899,
+    "GQGSV": 300,
+    "PSAMA": 181,
+    "PSAMC": 181,
+    "PSAMD": 1872,
+    "PSAMI": 1,
+    "PSAMS": 180,
+    "PSAMX": 181,
+    "PSSGR": 648
+  },
+  "pseudorange_rate_mps": {
+    "count": 9256,
+    "max": 587.5784912109375,
+    "mean": -208.0385114649867,
+    "median": -242.56642150878906,
+    "min": -975.2156372070312
+  },
+  "satellite_fix_usage": {
+    "not_used": 3670,
+    "used": 5553
+  },
+  "schema_version": "1.0",
+  "time_range": {
+    "duration_ms": 180701,
+    "first_timestamp_ms": 1791834471752,
+    "last_timestamp_ms": 1791834652453
+  },
+  "unique_satellites": {
+    "beidou": [
+      12,
+      19,
+      20,
+      23,
+      32,
+      37
+    ],
+    "galileo": [
+      2,
+      7,
+      8,
+      12,
+      26,
+      27,
+      29,
+      30,
+      33
+    ],
+    "glonass": [
+      1,
+      2,
+      3,
+      10,
+      11,
+      12,
+      18,
+      19
+    ],
+    "gps": [
+      3,
+      4,
+      6,
+      7,
+      9,
+      11,
+      16,
+      26,
+      31
+    ],
+    "qzss": [
+      195
+    ],
+    "sbas": [
+      131,
+      133
+    ]
+  }
+}

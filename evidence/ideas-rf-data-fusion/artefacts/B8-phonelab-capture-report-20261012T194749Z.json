@@ -1,0 +1,77 @@
+{
+  "captured_at": "20261012T194749Z",
+  "duration_seconds": 185.7,
+  "files": [
+    {
+      "local": "/home/jason/phone-mine/p9_pull_20261012/phonelab-captures/20261012T194749Z/phonelab_gnss_20261012_124625.jsonl",
+      "remote": "/sdcard/Android/data/com.modu.phonelab/files/phonelab_gnss_20261012_124625.jsonl",
+      "remote_state_after": {
+        "mtime_ns": 1791834471259016704,
+        "size": 5455213
+      },
+      "remote_state_before": {
+        "mtime_ns": 1791834471123016960,
+        "size": 5453846
+      },
+      "sha256": "801b147594388b8772e7616a40262a1e4dbfbc4f6c933fefc77dce97c69570f6",
+      "size_bytes": 5455213,
+      "summary": "/home/jason/phone-mine/p9_pull_20261012/phonelab-captures/20261012T194749Z/phonelab_gnss_20261012_124625.summary.json",
+      "summary_sha256": "690b5546f4e6246a568f1a4d3e1a4e3372240a1cd5899286d4b78df6488dca6f"
+    },
+    {
+      "local": "/home/jason/phone-mine/p9_pull_20261012/phonelab-captures/20261012T194749Z/phonelab_gnss_20261012_124751.jsonl",
+      "remote": "/sdcard/Android/data/com.modu.phonelab/files/phonelab_gnss_20261012_124751.jsonl",
+      "remote_state_after": {
+        "mtime_ns": 1791834652451016960,
+        "size": 12051500
+      },
+      "remote_state_before": null,
+      "sha256": "a9fc2a6116435140a4f566288458897f34c8acb1b160139f448ec7ab09c65544",
+      "size_bytes": 12051500,
+      "summary": "/home/jason/phone-mine/p9_pull_20261012/phonelab-captures/20261012T194749Z/phonelab_gnss_20261012_124751.summary.json",
+      "summary_sha256": "97f3e5f49782cf20549571eb4c172d4292553d15d387674d53dffb2d4ef14215"
+    },
+    {
+      "local": "/home/jason/phone-mine/p9_pull_20261012/phonelab-captures/20261012T194749Z/phonelab_sensors_20261012_124751.jsonl",
+      "remote": "/sdcard/Android/data/com.modu.phonelab/files/phonelab_sensors_20261012_124751.jsonl",
+      "remote_state_after": {
+        "mtime_ns": 1791834652331016960,
+        "size": 30336331
+      },
+      "remote_state_before": null,
+      "sha256": "47265cfd78d9b9b7fa63564bb9aaa27a3fb13d88a09fd67c60d455b044711465",
+      "size_bytes": 30336331,
+      "summary": "/home/jason/phone-mine/p9_pull_20261012/phonelab-captures/20261012T194749Z/phonelab_sensors_20261012_124751.summary.json",
+      "summary_sha256": "dd97874b5ad7fea23815948e263fd0a5b6177d4451ae1bfb26caa54a7a047657"
+    }
+  ],
+  "identifiers_preserved": true,
+  "min_raw": 10,
+  "package": "com.modu.phonelab",
+  "raw_measurement_count": 13439,
+  "raw_measurement_count_polled": 0,
+  "remote_files_after": {
+    "/sdcard/Android/data/com.modu.phonelab/files/phonelab_gnss_20261012_124625.jsonl": {
+      "mtime_ns": 1791834471259016704,
+      "size": 5455213
+    },
+    "/sdcard/Android/data/com.modu.phonelab/files/phonelab_gnss_20261012_124751.jsonl": {
+      "mtime_ns": 1791834652451016960,
+      "size": 12051500
+    },
+    "/sdcard/Android/data/com.modu.phonelab/files/phonelab_sensors_20261012_124751.jsonl": {
+      "mtime_ns": 1791834652331016960,
+      "size": 30336331
+    }
+  },
+  "remote_files_before": {
+    "/sdcard/Android/data/com.modu.phonelab/files/phonelab_gnss_20261012_124625.jsonl": {
+      "mtime_ns": 1791834471123016960,
+      "size": 5453846
+    }
+  },
+  "schema_version": "1.1",
+  "seconds_max": 180.0,
+  "seconds_requested": 90.0,
+  "serial": "192.168.1.91:39577"
+}

@@ -1,0 +1,379 @@
+#!/usr/bin/env python3
+"""ghost_watch.py — continuous ghost-satellite verdict loop.
+
+Wires the live P9 Doppler tracker into the ghost-sat detection pipeline:
+
+    P9 DopplerTracker (56 sats / 5s, SQLite)
+        -> adb pull to Legion
+        -> gnss_doppler.analyze()  (SV->NORAD, PRR->Doppler Hz, SGP4 predict)
+        -> compare.py verdicts      (CONSISTENT / NEEDS_INVESTIGATION / GHOST_CANDIDATE)
+        -> ghost_verdicts.jsonl     (append-only log)
+        -> observations.db          (durable per-measurement catalog, idempotent)
+
+Usage:
+    python3 ghost_watch.py [--epochs N] [--db PATH]
+
+Exit codes: 0 = clean (no ghosts), 2 = GHOST_CANDIDATE found, 1 = error.
+"""
+import sys, os, json, sqlite3, subprocess, tempfile, time
+from datetime import datetime, timezone
+
+ADB = "adb"
+P9_SERIAL = "192.168.1.91:5555"
+P9_DOPPLER_DIR = "/data/local/tmp/doppler"
+GHOST_SAT_DIR = os.path.expanduser(
+    "~/Projects/github/modu-rf-lab/tools/ghost-sat")
+OUT_DIR = os.path.expanduser(
+    "~/workspace/goals/satellite-operations-ghost-sat-passes/hidden_files")
+VERDICTS_LOG = os.path.join(OUT_DIR, "ghost_verdicts.jsonl")
+
+# P9 balcony location (from field reports), West Kelowna BC
+OBS_LAT, OBS_LON, OBS_ALT_M = 49.8269, -119.6479, 450.0
+
+sys.path.insert(0, GHOST_SAT_DIR)
+
+
+def pull_latest_db(tmpdir):
+    """Pull today's Doppler DB from P9 via SQLite backup API.
+
+    The DB is LIVE (DopplerTracker writes continuously). Raw cp of a live
+    SQLite DB produces torn pages -> corrupt copy. Use the on-device
+    sqlite3 backup API to snapshot first, then pull the snapshot.
+    """
+    today = datetime.now().strftime("%Y%m%d")
+    remote = f"{P9_DOPPLER_DIR}/doppler_{today}.db"
+    snapshot = "/data/local/tmp/ghost_watch_snapshot.db"
+    staged = f"/sdcard/ghost_watch_{today}.db"
+    local = os.path.join(tmpdir, f"doppler_{today}.db")
+
+    def run(*args, timeout=60):
+        return subprocess.run(list(args), capture_output=True,
+                              text=True, timeout=timeout)
+
+    # Verify the DB exists; fall back to newest doppler_*.db on device
+    r = run(ADB, "-s", P9_SERIAL, "shell",
+            f"ls {P9_DOPPLER_DIR}/doppler_{today}.db 2>/dev/null || "
+            f"ls -t {P9_DOPPLER_DIR}/doppler_*.db 2>/dev/null | head -1")
+    lines = r.stdout.strip().splitlines()
+    remote = lines[0].strip() if lines else ""
+    if not remote:
+        raise RuntimeError("no doppler DB found on P9")
+    # Snapshot via SQLite backup API (torn-page safe), then stage via /sdcard
+    # (snapshot is root-owned; adbd runs as shell)
+    # The DopplerTracker writes every ~2s; the on-device .backup can hit a
+    # transient "database is locked". Retry with backoff instead of failing
+    # the whole run (seen 2026-10-11: one 5-min cycle lost per lock hit).
+    last_err = ""
+    for attempt in range(5):
+        r = run(ADB, "-s", P9_SERIAL, "shell",
+                "su -c '/data/local/tmp/sqlite3 " + remote + " \".backup main " + snapshot + "\""
+                " && cp " + snapshot + " " + staged +
+                " && chmod 644 " + staged +
+                " && rm -f " + snapshot + "'", timeout=180)
+        if r.returncode == 0:
+            break
+        last_err = (r.stdout + " " + r.stderr).strip()
+        if "database is locked" in last_err.lower():
+            time.sleep(2 * (attempt + 1))
+            continue
+        raise RuntimeError("on-device backup failed: %s" % last_err)
+    else:
+        raise RuntimeError(
+            "on-device backup failed after 5 attempts: %s" % last_err[:200])
+    r = run(ADB, "-s", P9_SERIAL, "pull", staged, local, timeout=180)
+    run(ADB, "-s", P9_SERIAL, "shell", f"rm -f {staged}")
+    if r.returncode != 0 or not os.path.exists(local):
+        raise RuntimeError(f"adb pull failed: {r.stderr.strip()}")
+    # Integrity gate before use
+    chk = subprocess.run(
+        ["sqlite3", local, "PRAGMA integrity_check;"],
+        capture_output=True, text=True, timeout=60)
+    if "ok" not in chk.stdout.lower():
+        raise RuntimeError(
+            f"pulled DB failed integrity check: {chk.stdout.strip()[:100]}")
+    return local
+
+
+def load_measurements(db_path, n_epochs=60):
+    """Read the last n_epochs of measurements. Returns meas dicts."""
+    con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    cur = con.cursor()
+    cur.execute(
+        "SELECT epoch_id, wall_time_ms FROM epochs "
+        "ORDER BY epoch_id DESC LIMIT ?", (n_epochs,))
+    epochs = cur.fetchall()
+    if not epochs:
+        con.close()
+        return []
+    epoch_ids = [e[0] for e in epochs]
+    ts_by_epoch = {e[0]: e[1] for e in epochs}
+    q = ("SELECT epoch_id, svid, constellation, pr_rate_mps FROM measurements "
+         "WHERE epoch_id IN (%s) AND pr_rate_mps IS NOT NULL"
+         % ",".join("?" * len(epoch_ids)))
+    cur.execute(q, epoch_ids)
+    meas = []
+    for epoch_id, svid, const, prr in cur.fetchall():
+        wall_ms = ts_by_epoch[epoch_id]
+        ts_utc = datetime.fromtimestamp(wall_ms / 1000.0,
+                                        tz=timezone.utc).isoformat()
+        meas.append({"svid": svid, "constellation": const,
+                     "prr_m_s": prr, "timestamp_utc": ts_utc})
+    con.close()
+    return meas
+
+
+JOURNAL_SOURCE = "ghost-watch"
+
+
+def _journal_run(run, ghosts, _log=None):
+    """Append serendipity-journal entries for one completed run.
+
+    The journal -> job-board bridge triages entries by source and text:
+    it posts a job only for a concrete investigation, and pushes a
+    Gotify notification only when the triaged priority is >= 85. So
+    signal discipline lives in the wording:
+
+    - Routine runs (no surviving candidates) are written as plainly
+      informational; triage says NO -> no job, no notification.
+      modu_serendipity's 1 h dedupe on (source, observation[:120])
+      collapses identical routine entries, so the 15-min watch
+      cadence cannot flood the journal.
+    - A surviving GHOST_CANDIDATE gets its own entry, worded as an
+      urgent concrete investigation (the >= 85 path to a push).
+    - Candidate-grade signals whose TLE was too old are NEVER called
+      ghosts: compare.py already verdicts them STALE_TLE, and they are
+      journaled under that label as a TLE-refresh action.
+
+    Results are per-measurement rows, so the same object can appear
+    several times; entries are deduped to one per NORAD id (largest
+    |residual| row wins) before journaling.
+
+    Best-effort by contract: journaling must never break the watch
+    loop, so everything here is wrapped and swallowed.
+    """
+    try:
+        if _log is None:
+            sys.path.insert(0, os.path.expanduser("~/.local/bin"))
+            from modu_serendipity import log_serendipity as _log
+        s = run.get("corrected_summary") or {}
+        vc = s.get("verdict_counts") or {}
+        counts = ", ".join("%s=%d" % (k, vc[k]) for k in sorted(vc))
+        results = run.get("corrected_verdicts") or []
+        stale = [r for r in results if r.get("verdict") == "STALE_TLE"]
+
+        def _best_by_norad(rows):
+            best = {}
+            for r in rows:
+                key = r.get("norad_id")
+                res = abs((r.get("details") or {}).get(
+                    "doppler_residual_hz") or 0)
+                cur = best.get(key)
+                if cur is None or res > abs((cur.get("details") or {}).get(
+                        "doppler_residual_hz") or 0):
+                    best[key] = r
+            return list(best.values())
+
+        uniq_ghosts = _best_by_norad(ghosts)
+        if uniq_ghosts:
+            for g in uniq_ghosts[:3]:
+                d = g.get("details") or {}
+                meta = g.get("_meta") or {}
+                age = d.get("tle_age_hours")
+                _log(JOURNAL_SOURCE,
+                     "GHOST_CANDIDATE survived correction: NORAD %s (%s), "
+                     "svid=%s %s, Doppler residual %s Hz over %s epochs, "
+                     "TLE age %s. Run totals: %s analyzed (%s)."
+                     % (g.get("norad_id"), g.get("name"),
+                        meta.get("svid"), meta.get("constellation"),
+                        d.get("doppler_residual_hz"), d.get("epoch_count"),
+                        ("%s h" % age) if age is not None else "unknown",
+                        s.get("n_analyzed"), counts),
+                     "URGENT: ghost-satellite candidate needs immediate "
+                     "human review -- verify against a fresh TLE and a "
+                     "second observation window. Concrete investigation "
+                     "for a worker.")
+            if len(uniq_ghosts) > 3:
+                _log(JOURNAL_SOURCE,
+                     "ghost-watch: %d further distinct GHOST_CANDIDATE "
+                     "objects in the same run (see ghost_verdicts.jsonl %s)"
+                     % (len(uniq_ghosts) - 3, run.get("run_utc")),
+                     "URGENT: multiple ghost-satellite candidates in one "
+                     "run need human review.")
+        else:
+            _log(JOURNAL_SOURCE,
+                 "ghost-watch run: %s analyzed, %s measured; verdicts: %s; "
+                 "median residual %s Hz; no surviving ghost candidates"
+                 % (s.get("n_analyzed"), s.get("n_measured"), counts,
+                    s.get("median_doppler_residual_hz")),
+                 "routine ghost-watch cycle; informational only, "
+                 "no action needed")
+        if stale:
+            def _age_txt(r):
+                a = (r.get("details") or {}).get("tle_age_hours")
+                return ("%s h" % a) if a is not None else "unknown"
+
+            named = "; ".join(
+                "NORAD %s (%s) residual %s Hz, TLE age %s"
+                % (r.get("norad_id"), r.get("name"),
+                   (r.get("details") or {}).get("doppler_residual_hz"),
+                   _age_txt(r))
+                for r in _best_by_norad(stale)[:3])
+            _log(JOURNAL_SOURCE,
+                 "ghost-watch: %d verdict(s) labeled STALE_TLE (not "
+                 "ghosts) -- TLE older than 72 h: %s"
+                 % (len(stale), named),
+                 "candidate-grade signals downgraded by stale TLE data; "
+                 "action: refresh the TLE catalog and re-check these "
+                 "objects")
+    except Exception:
+        pass
+
+
+def _persist_run(run):
+    """Persist one run's corrected per-measurement verdicts to the
+    durable observation catalog (observations.db, via log_observation).
+
+    Before this wiring the watch loop wrote only ghost_verdicts.jsonl;
+    the catalog was fed solely by manual log_observation.py runs, so
+    effectively every automated measurement evaporated at process exit
+    (147 runs / ~226k analyzed rows vs 15 catalog rows). log_results is
+    idempotent on (timestamp, norad_id, svid), so overlapping epoch
+    windows and re-runs never duplicate rows.
+
+    do_enrich=False: the automated path makes no SatNOGS network calls
+    (keeps the 15-min loop hermetic); first-seen satellites are
+    cataloged without enrichment and can be enriched later via
+    log_observation.py --backfill.
+
+    Best-effort by contract (same as _journal_run): a catalog failure
+    must never break the watch loop. Returns inserted count or None.
+    """
+    try:
+        from log_observation import log_results, DEFAULT_DB
+        stats = {}
+        n = 0
+        for attempt in range(3):
+            try:
+                n = log_results(
+                    {"results": run.get("corrected_verdicts") or []},
+                    {}, DEFAULT_DB, run.get("run_utc"),
+                    do_enrich=False, stats=stats)
+                break
+            except Exception:
+                if attempt == 2:
+                    raise
+                time.sleep(2 * (attempt + 1))
+        print(f"ghost_watch: persisted {n} observations to catalog "
+              f"({stats.get('skipped', 0)} duplicates skipped)")
+        return n
+    except Exception as e:
+        print(f"ghost_watch: WARN: catalog persist failed: {e}",
+              file=sys.stderr)
+        return None
+
+
+def main(argv):
+    n_epochs = 60
+    if "--epochs" in argv:
+        n_epochs = int(argv[argv.index("--epochs") + 1])
+    from gnss_doppler import analyze, prr_to_doppler_hz, \
+        CONSTELLATION_L1_HZ, C
+    tmpdir = tempfile.mkdtemp(prefix="ghost_watch_")
+    try:
+        db_path = pull_latest_db(tmpdir)
+    except RuntimeError as e:
+        print(f"ghost_watch: ERROR: {e}", file=sys.stderr)
+        return 1
+    meas = load_measurements(db_path, n_epochs)
+    if not meas:
+        print("ghost_watch: ERROR: no measurements in DB", file=sys.stderr)
+        return 1
+
+    def median_abs_residual(result):
+        vals = [abs(r["details"]["doppler_residual_hz"]) for r in result["results"]
+                if "doppler_residual_hz" in r.get("details", {})]
+        if not vals:
+            return float("inf")
+        vals.sort()
+        n = len(vals)
+        return vals[n // 2] if n % 2 else (vals[n // 2 - 1] + vals[n // 2]) / 2
+
+    def sign_meas(sign):
+        out = []
+        for m in meas:
+            freq = m.get("carrier_freq_hz") or \
+                CONSTELLATION_L1_HZ.get(m["constellation"])
+            if not freq:
+                continue
+            # sign=+1: stock convention (observed = -prr*f/C).
+            # sign=-1: flipped (module documents SIGN_FLIP as field unknown).
+            dop = sign * prr_to_doppler_hz(m["prr_m_s"], freq)
+            out.append(dict(m, prr_m_s=(-dop * C / freq)))
+        return out
+
+    # Sign auto-detect: the correct PRR->Doppler convention is the one
+    # that minimizes residuals against SGP4 predictions.
+    trials = {}
+    for sign in (1, -1):
+        res = analyze(sign_meas(sign), OBS_LAT, OBS_LON, OBS_ALT_M)
+        trials[sign] = (res, median_abs_residual(res))
+    best_sign = min(trials, key=lambda s: trials[s][1])
+    raw, _ = trials[best_sign]
+    print(f"ghost_watch: sign auto-detect: s=+1 -> "
+          f"{trials[1][1]:.0f} Hz median|res|, s=-1 -> "
+          f"{trials[-1][1]:.0f} Hz median|res|; using s={best_sign:+d}")
+
+    # Clock correction: compare.py stores |residual|, so the signed median
+    # (the actual clock bias) must be reconstructed from observed-predicted.
+    signed = [r["details"]["observed_doppler_hz"] -
+              r["details"]["predicted_doppler_hz"] for r in raw["results"]
+              if "observed_doppler_hz" in r.get("details", {}) and
+              "predicted_doppler_hz" in r.get("details", {})]
+    signed.sort()
+    clock_bias_hz = (signed[len(signed) // 2] if signed else 0.0)
+    base = sign_meas(best_sign)
+    corrected_meas = []
+    for m in base:
+        freq = m.get("carrier_freq_hz") or \
+            CONSTELLATION_L1_HZ.get(m["constellation"])
+        dop = prr_to_doppler_hz(m["prr_m_s"], freq) - clock_bias_hz
+        corrected_meas.append(dict(m, prr_m_s=(-dop * C / freq)))
+    corr = analyze(corrected_meas, OBS_LAT, OBS_LON, OBS_ALT_M)
+
+    run = {"run_utc": datetime.now(timezone.utc).isoformat(),
+           "n_epochs_requested": n_epochs,
+           "n_measurements": len(meas),
+           "sign_used": best_sign,
+           "sign_trial_median_abs_res": {str(s): round(trials[s][1], 1)
+                                         for s in trials},
+           "clock_bias_correction_hz": round(clock_bias_hz, 1),
+           "raw_summary": raw["summary"],
+           "corrected_summary": corr["summary"],
+           "corrected_verdicts": corr["results"]}
+    os.makedirs(OUT_DIR, exist_ok=True)
+    with open(VERDICTS_LOG, "a") as f:
+        f.write(json.dumps(run) + "\n")
+
+    for label, res in (("sign-corrected", raw), ("+clock-corrected", corr)):
+        s = res["summary"]
+        print(f"ghost_watch [{label}]: {s['n_analyzed']} analyzed, "
+              f"verdicts={json.dumps(s['verdict_counts'])}")
+    print(f"  clock-bias correction applied: {clock_bias_hz:.0f} Hz")
+    ghosts = [r for r in corr["results"]
+              if r.get("verdict") == "GHOST_CANDIDATE"]
+    for g in ghosts:
+        meta = g.get("_meta", {})
+        print(f"  ALERT GHOST_CANDIDATE (post-correction): "
+              f"NORAD {g['norad_id']} ({g.get('name')}) "
+              f"svid={meta.get('svid')} {meta.get('constellation')} "
+              f"residual={g.get('details', {}).get('doppler_residual_hz')} Hz")
+    if not ghosts:
+        print("  no surviving ghost candidates after corrections")
+    print(f"  log: {VERDICTS_LOG}")
+    _persist_run(run)
+    _journal_run(run, ghosts)
+    return 2 if ghosts else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

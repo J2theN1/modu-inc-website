@@ -1,0 +1,1226 @@
+{
+  "capture": {
+    "duration_ms": 180386,
+    "first_timestamp_ms": 1791834471950,
+    "last_timestamp_ms": 1791834652336
+  },
+  "event_counts": {
+    "sensor_accuracy": 15,
+    "sensor_inventory": 1,
+    "sensor_sample": 85143,
+    "sensor_stream_started": 1
+  },
+  "inventory": {
+    "sampling_period_us": 50000,
+    "sensor_count": 38,
+    "sensors": [
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 1000,
+        "maximum_range": 1,
+        "min_delay_us": 1000,
+        "name": "Dynamic Sensor Manager",
+        "power_ma": 0.001,
+        "reporting_mode": 3,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "android.sensor.dynamic_sensor_meta",
+        "type": 32,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 666667,
+        "maximum_range": 156.9064,
+        "min_delay_us": 5000,
+        "name": "ICM45631 Accelerometer",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.0005985504,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.accelerometer",
+        "type": 1,
+        "vendor": "Invensense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 800000,
+        "maximum_range": 3198.1567,
+        "min_delay_us": 10000,
+        "name": "MMC5616 Magnetometer",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.0976,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.magnetic_field",
+        "type": 2,
+        "vendor": "MEMSIC",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 200000,
+        "maximum_range": 360,
+        "min_delay_us": 5000,
+        "name": "Orientation Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 1e-05,
+        "selected_for_stream": false,
+        "string_type": "android.sensor.orientation",
+        "type": 3,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 666667,
+        "maximum_range": 34.906586,
+        "min_delay_us": 5000,
+        "name": "ICM45631 Gyroscope",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.00013323124,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.gyroscope",
+        "type": 4,
+        "vendor": "Invensense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 100000,
+        "maximum_range": 1000000,
+        "min_delay_us": 0,
+        "name": "TMD3733 Ambient Light",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 0.01,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.light",
+        "type": 5,
+        "vendor": "AMS",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 1100,
+        "min_delay_us": 25000,
+        "name": "ICP20100 Pressure Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.0001,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.pressure",
+        "type": 6,
+        "vendor": "InvenSense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 100000,
+        "maximum_range": 5,
+        "min_delay_us": 0,
+        "name": "TMD3733 Proximity (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 1,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.proximity",
+        "type": 8,
+        "vendor": "AMS",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 200000,
+        "maximum_range": 9.81,
+        "min_delay_us": 5000,
+        "name": "Gravity Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 1e-05,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.gravity",
+        "type": 9,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 200000,
+        "maximum_range": 156.96,
+        "min_delay_us": 20000,
+        "name": "Linear Acceleration Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 1e-05,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.linear_acceleration",
+        "type": 10,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 200000,
+        "maximum_range": 1,
+        "min_delay_us": 5000,
+        "name": "Rotation Vector Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 1e-05,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.rotation_vector",
+        "type": 11,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 800000,
+        "maximum_range": 3198.1567,
+        "min_delay_us": 10000,
+        "name": "MMC5616 Magnetometer-Uncalibrated",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.0976,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.magnetic_field_uncalibrated",
+        "type": 14,
+        "vendor": "MEMSIC",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 200000,
+        "maximum_range": 1,
+        "min_delay_us": 5000,
+        "name": "Game Rotation Vector Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 1e-05,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.game_rotation_vector",
+        "type": 15,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 666667,
+        "maximum_range": 34.906586,
+        "min_delay_us": 5000,
+        "name": "ICM45631 Gyroscope-Uncalibrated",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.00013323124,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.gyroscope_uncalibrated",
+        "type": 16,
+        "vendor": "Invensense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": -1,
+        "name": "Significant Motion (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 2,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "android.sensor.significant_motion",
+        "type": 17,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": 0,
+        "name": "Step Detector",
+        "power_ma": 0.001,
+        "reporting_mode": 3,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "android.sensor.step_detector",
+        "type": 18,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 3.4028235e+38,
+        "min_delay_us": 0,
+        "name": "Step Counter",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 1,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.step_counter",
+        "type": 19,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 200000,
+        "maximum_range": 1,
+        "min_delay_us": 5000,
+        "name": "Geomagnetic Rotation Vector Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 1e-05,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.geomagnetic_rotation_vector",
+        "type": 20,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": 0,
+        "name": "Tilt Sensor (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 3,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "android.sensor.tilt_detector",
+        "type": 22,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": -1,
+        "name": "Lift to Wake Sensor (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 2,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "android.sensor.pick_up_gesture",
+        "type": 25,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 3,
+        "min_delay_us": 0,
+        "name": "Device Orientation",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 1,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.device_orientation",
+        "type": 27,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 666667,
+        "maximum_range": 156.9064,
+        "min_delay_us": 5000,
+        "name": "ICM45631 Accelerometer-Uncalibrated",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.0005985504,
+        "selected_for_stream": true,
+        "string_type": "android.sensor.accelerometer_uncalibrated",
+        "type": 35,
+        "vendor": "Invensense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 666667,
+        "maximum_range": 85,
+        "min_delay_us": 20000,
+        "name": "ICM45631 Temperature",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.0078125,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.gyro_temperature",
+        "type": 65538,
+        "vendor": "Invensense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 85,
+        "min_delay_us": 25000,
+        "name": "ICP20100 Temperature",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0.01,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.pressure_temp",
+        "type": 65539,
+        "vendor": "InvenSense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 3.4028235e+38,
+        "min_delay_us": 0,
+        "name": "Camera V-Sync 0",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 0,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.camera_vsync",
+        "type": 65541,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 3.4028235e+38,
+        "min_delay_us": 0,
+        "name": "Camera V-Sync 1",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 0,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.camera_vsync",
+        "type": 65541,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 3.4028235e+38,
+        "min_delay_us": 0,
+        "name": "Camera V-Sync 2",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 0,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.camera_vsync",
+        "type": 65541,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 409600,
+        "maximum_range": 1000000,
+        "min_delay_us": 16000,
+        "name": "VD6282 Rear Light Sensor",
+        "power_ma": 0.001,
+        "reporting_mode": 0,
+        "resolution": 0,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.rear_light",
+        "type": 65545,
+        "vendor": "STMicro",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": -1,
+        "name": "ICM45631 Motion Detect",
+        "power_ma": 0.001,
+        "reporting_mode": 2,
+        "resolution": 0,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.motion_detect",
+        "type": 65554,
+        "vendor": "Invensense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": -1,
+        "name": "ICM45631 Stationary Detect",
+        "power_ma": 0.001,
+        "reporting_mode": 2,
+        "resolution": 0,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.stationary_detect",
+        "type": 65555,
+        "vendor": "Invensense",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": 0,
+        "name": "Double Twist (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 3,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.double_twist",
+        "type": 131073,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 3000,
+        "fifo_reserved_count": 3000,
+        "max_delay_us": 1000000,
+        "maximum_range": 255,
+        "min_delay_us": 0,
+        "name": "Binned Brightness (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.binned_brightness",
+        "type": 131077,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": -1,
+        "name": "Proximity Gated Single Tap Gesture (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 2,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.single_touch",
+        "type": 131083,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": -1,
+        "name": "Proximity Gated Long Press Gesture (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 2,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.long_press",
+        "type": 131085,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 0,
+        "fifo_reserved_count": 0,
+        "max_delay_us": 0,
+        "maximum_range": 1,
+        "min_delay_us": -1,
+        "name": "Quick Pickup Sensor (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 2,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.quick_pickup",
+        "type": 131087,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 1000000,
+        "maximum_range": 1000000,
+        "min_delay_us": 0,
+        "name": "Auto Brightness",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 0.001,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.auto_brightness",
+        "type": 131088,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": false
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 1000000,
+        "maximum_range": 1000000,
+        "min_delay_us": 0,
+        "name": "AAD Proximity Sensor (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.prox_aad",
+        "type": 131091,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      },
+      {
+        "fifo_max_count": 100,
+        "fifo_reserved_count": 100,
+        "max_delay_us": 1000000,
+        "maximum_range": 1000000,
+        "min_delay_us": 0,
+        "name": "Proximity(Voice Calls) Sensor (wake-up)",
+        "power_ma": 0.001,
+        "reporting_mode": 1,
+        "resolution": 1,
+        "selected_for_stream": false,
+        "string_type": "com.google.sensor.prox_voice_call",
+        "type": 131092,
+        "vendor": "Google",
+        "version": 1,
+        "wake_up": true
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "sensors": {
+    "android.sensor.accelerometer": {
+      "accuracy_counts": {
+        "1": 8955
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 8955,
+          "max": 0.5270236730575562,
+          "mean": 0.49596034531351046,
+          "median": 0.4960486590862274,
+          "min": 0.3754407465457916
+        },
+        {
+          "component": 1,
+          "count": 8955,
+          "max": -0.7693617343902588,
+          "mean": -0.8319386052526222,
+          "median": -0.8317606449127197,
+          "min": -1.26458740234375
+        },
+        {
+          "component": 2,
+          "count": 8955,
+          "max": 9.740509986877441,
+          "mean": 9.692368336991183,
+          "median": 9.692925453186035,
+          "min": 9.606210708618164
+        }
+      ],
+      "estimated_sample_rate_hz": 49.646849703537306,
+      "sample_count": 8955,
+      "sensor_duration_s": 180.353840243
+    },
+    "android.sensor.accelerometer_uncalibrated": {
+      "accuracy_counts": {
+        "3": 17904
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 17904,
+          "max": 0.7649474143981934,
+          "mean": 0.4959994669724006,
+          "median": 0.49627313017845154,
+          "min": 0.22453123331069946
+        },
+        {
+          "component": 1,
+          "count": 17904,
+          "max": 0.15809212625026703,
+          "mean": -0.8317838309256158,
+          "median": -0.832059919834137,
+          "min": -1.7952772378921509
+        },
+        {
+          "component": 2,
+          "count": 17904,
+          "max": 9.871742248535156,
+          "mean": 9.692368041307827,
+          "median": 9.692925453186035,
+          "min": 9.499144554138184
+        },
+        {
+          "component": 3,
+          "count": 17904,
+          "max": 0.0,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0
+        },
+        {
+          "component": 4,
+          "count": 17904,
+          "max": 0.0,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0
+        },
+        {
+          "component": 5,
+          "count": 17904,
+          "max": 0.0,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0
+        }
+      ],
+      "estimated_sample_rate_hz": 99.29369793430621,
+      "sample_count": 17904,
+      "sensor_duration_s": 180.303487255
+    },
+    "android.sensor.device_orientation": {
+      "accuracy_counts": {
+        "3": 1
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 1,
+          "max": 1.0,
+          "mean": 1.0,
+          "median": 1.0,
+          "min": 1.0
+        }
+      ],
+      "estimated_sample_rate_hz": null,
+      "sample_count": 1,
+      "sensor_duration_s": null
+    },
+    "android.sensor.game_rotation_vector": {
+      "accuracy_counts": {
+        "3": 4476
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4476,
+          "max": -0.04812544956803322,
+          "mean": -0.04840067240814874,
+          "median": -0.0482745636254549,
+          "min": -0.050787609070539474
+        },
+        {
+          "component": 1,
+          "count": 4476,
+          "max": 0.01604277268052101,
+          "mean": 0.012484359744706517,
+          "median": 0.012308429460972548,
+          "min": 0.012116892263293266
+        },
+        {
+          "component": 2,
+          "count": 4476,
+          "max": -0.7066843509674072,
+          "mean": -0.7070550427866152,
+          "median": -0.7070128321647644,
+          "min": -0.7072334885597229
+        },
+        {
+          "component": 3,
+          "count": 4476,
+          "max": 0.7055543065071106,
+          "mean": 0.7053894446405372,
+          "median": 0.7054416239261627,
+          "min": 0.7052251696586609
+        }
+      ],
+      "estimated_sample_rate_hz": 24.82203793806198,
+      "sample_count": 4476,
+      "sensor_duration_s": 180.283343824
+    },
+    "android.sensor.geomagnetic_rotation_vector": {
+      "accuracy_counts": {
+        "3": 4476
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4476,
+          "max": -0.04591522738337517,
+          "mean": -0.04680613450160029,
+          "median": -0.04678986594080925,
+          "min": -0.05196002498269081
+        },
+        {
+          "component": 1,
+          "count": 4476,
+          "max": 0.023927971720695496,
+          "mean": 0.01687825935076293,
+          "median": 0.016895906068384647,
+          "min": 0.013214673846960068
+        },
+        {
+          "component": 2,
+          "count": 4476,
+          "max": -0.722025454044342,
+          "mean": -0.771836406703609,
+          "median": -0.7722029089927673,
+          "min": -0.7799644470214844
+        },
+        {
+          "component": 3,
+          "count": 4476,
+          "max": 0.6900638341903687,
+          "mean": 0.633843390828696,
+          "median": 0.6334293484687805,
+          "min": 0.6235272884368896
+        },
+        {
+          "component": 4,
+          "count": 4476,
+          "max": 1.0471975803375244,
+          "mean": 1.0471975803375244,
+          "median": 1.0471975803375244,
+          "min": 1.0471975803375244
+        }
+      ],
+      "estimated_sample_rate_hz": 24.82203793806198,
+      "sample_count": 4476,
+      "sensor_duration_s": 180.283343824
+    },
+    "android.sensor.gravity": {
+      "accuracy_counts": {
+        "3": 4476
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4476,
+          "max": 0.5008422136306763,
+          "mean": 0.4978584991143792,
+          "median": 0.49847039580345154,
+          "min": 0.48163101077079773
+        },
+        {
+          "component": 1,
+          "count": 4476,
+          "max": -0.8351051211357117,
+          "mean": -0.8427492170540535,
+          "median": -0.8384931981563568,
+          "min": -0.9253201484680176
+        },
+        {
+          "component": 2,
+          "count": 4476,
+          "max": 9.76183032989502,
+          "mean": 9.761036951910501,
+          "median": 9.761350631713867,
+          "min": 9.754379272460938
+        }
+      ],
+      "estimated_sample_rate_hz": 24.82203793806198,
+      "sample_count": 4476,
+      "sensor_duration_s": 180.283343824
+    },
+    "android.sensor.gyroscope": {
+      "accuracy_counts": {
+        "3": 4477
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4477,
+          "max": 0.004146822262555361,
+          "mean": -1.4805125821984712e-06,
+          "median": 0.0,
+          "min": -0.004230091813951731
+        },
+        {
+          "component": 1,
+          "count": 4477,
+          "max": 0.0013656201772391796,
+          "mean": 2.644835074963513e-06,
+          "median": 0.0,
+          "min": -0.002897779457271099
+        },
+        {
+          "component": 2,
+          "count": 4477,
+          "max": 0.003497319994494319,
+          "mean": -3.749639544959384e-06,
+          "median": 0.0,
+          "min": -0.006977986078709364
+        }
+      ],
+      "estimated_sample_rate_hz": 24.8206492947051,
+      "sample_count": 4477,
+      "sensor_duration_s": 180.333719189
+    },
+    "android.sensor.gyroscope_uncalibrated": {
+      "accuracy_counts": {
+        "3": 17904
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 17904,
+          "max": 0.008776607923209667,
+          "mean": 0.0009412897889976158,
+          "median": 0.0009159647743217647,
+          "min": -0.0076108346693217754
+        },
+        {
+          "component": 1,
+          "count": 17904,
+          "max": 0.008027181960642338,
+          "mean": 0.0017512421842791612,
+          "median": 0.0017486599972471595,
+          "min": -0.005612365901470184
+        },
+        {
+          "component": 2,
+          "count": 17904,
+          "max": 0.030193530023097992,
+          "mean": 0.0010307170920981104,
+          "median": 0.0010325420880690217,
+          "min": -0.023015696555376053
+        },
+        {
+          "component": 3,
+          "count": 17904,
+          "max": 0.001075831358321011,
+          "mean": 0.0009434926190460194,
+          "median": 0.0009370896150358021,
+          "min": 0.0007811677060090005
+        },
+        {
+          "component": 4,
+          "count": 17904,
+          "max": 0.0018661880167201161,
+          "mean": 0.0017507938662136803,
+          "median": 0.0017429004656150937,
+          "min": 0.0016641037072986364
+        },
+        {
+          "component": 5,
+          "count": 17904,
+          "max": 0.0011711947154253721,
+          "mean": 0.0010342170166068522,
+          "median": 0.0010290656937286258,
+          "min": 0.0009035576949827373
+        }
+      ],
+      "estimated_sample_rate_hz": 99.29369793430621,
+      "sample_count": 17904,
+      "sensor_duration_s": 180.303487255
+    },
+    "android.sensor.light": {
+      "accuracy_counts": {
+        "3": 2
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 2,
+          "max": 135.87625122070312,
+          "mean": 131.89312362670898,
+          "median": 131.89312362670898,
+          "min": 127.90999603271484
+        }
+      ],
+      "estimated_sample_rate_hz": 0.000998495574814228,
+      "sample_count": 2,
+      "sensor_duration_s": 1001.506691891
+    },
+    "android.sensor.linear_acceleration": {
+      "accuracy_counts": {
+        "3": 4476
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4476,
+          "max": 0.03798407316207886,
+          "mean": -0.0026483431032345273,
+          "median": -0.0030227601528167725,
+          "min": -0.1221066415309906
+        },
+        {
+          "component": 1,
+          "count": 4476,
+          "max": 0.26505452394485474,
+          "mean": 0.01121306339473571,
+          "median": 0.007375955581665039,
+          "min": -0.4052813649177551
+        },
+        {
+          "component": 2,
+          "count": 4476,
+          "max": -0.03650093078613281,
+          "mean": -0.06858536087049769,
+          "median": -0.06754684448242188,
+          "min": -0.13732624053955078
+        }
+      ],
+      "estimated_sample_rate_hz": 24.82203793806198,
+      "sample_count": 4476,
+      "sensor_duration_s": 180.283343824
+    },
+    "android.sensor.magnetic_field": {
+      "accuracy_counts": {
+        "2": 4508
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4508,
+          "max": -11.541199684143066,
+          "mean": -12.423642966212059,
+          "median": -12.3951997756958,
+          "min": -16.677400588989258
+        },
+        {
+          "component": 1,
+          "count": 4508,
+          "max": 2.879199981689453,
+          "mean": 1.2440698163215311,
+          "median": 1.2444000244140625,
+          "min": 0.6344000101089478
+        },
+        {
+          "component": 2,
+          "count": 4508,
+          "max": -37.344200134277344,
+          "mean": -38.461267856337265,
+          "median": -38.45439910888672,
+          "min": -40.36980056762695
+        }
+      ],
+      "estimated_sample_rate_hz": 24.999634640906468,
+      "sample_count": 4508,
+      "sensor_duration_s": 180.282634716
+    },
+    "android.sensor.magnetic_field_uncalibrated": {
+      "accuracy_counts": {
+        "3": 4508
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4508,
+          "max": -24.729398727416992,
+          "mean": -25.611769640244734,
+          "median": -25.583398818969727,
+          "min": -29.865598678588867
+        },
+        {
+          "component": 1,
+          "count": 4508,
+          "max": 2.818199872970581,
+          "mean": 1.188328152514181,
+          "median": 1.18340003490448,
+          "min": 0.5856000185012817
+        },
+        {
+          "component": 2,
+          "count": 4508,
+          "max": -90.8656005859375,
+          "mean": -91.97757624479766,
+          "median": -91.97579956054688,
+          "min": -93.89119720458984
+        },
+        {
+          "component": 3,
+          "count": 4508,
+          "max": -13.188127517700195,
+          "mean": -13.188127517700195,
+          "median": -13.188127517700195,
+          "min": -13.188127517700195
+        },
+        {
+          "component": 4,
+          "count": 4508,
+          "max": -0.055650144815444946,
+          "mean": -0.055650144815444946,
+          "median": -0.055650144815444946,
+          "min": -0.055650144815444946
+        },
+        {
+          "component": 5,
+          "count": 4508,
+          "max": -53.51632308959961,
+          "mean": -53.51632308959961,
+          "median": -53.51632308959961,
+          "min": -53.51632308959961
+        }
+      ],
+      "estimated_sample_rate_hz": 24.999634640906468,
+      "sample_count": 4508,
+      "sensor_duration_s": 180.282634716
+    },
+    "android.sensor.pressure": {
+      "accuracy_counts": {
+        "3": 4503
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4503,
+          "max": 960.9784545898438,
+          "mean": 960.8268662498656,
+          "median": 960.8195190429688,
+          "min": 960.7857055664062
+        }
+      ],
+      "estimated_sample_rate_hz": 24.973301756318058,
+      "sample_count": 4503,
+      "sensor_duration_s": 180.272518385
+    },
+    "android.sensor.proximity": {
+      "accuracy_counts": {
+        "3": 1
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 1,
+          "max": 5.0,
+          "mean": 5.0,
+          "median": 5.0,
+          "min": 5.0
+        }
+      ],
+      "estimated_sample_rate_hz": null,
+      "sample_count": 1,
+      "sensor_duration_s": null
+    },
+    "android.sensor.rotation_vector": {
+      "accuracy_counts": {
+        "3": 4476
+      },
+      "components": [
+        {
+          "component": 0,
+          "count": 4476,
+          "max": -0.04676998779177666,
+          "mean": -0.0472347922248631,
+          "median": -0.0470176599919796,
+          "min": -0.04958775267004967
+        },
+        {
+          "component": 1,
+          "count": 4476,
+          "max": 0.019483080133795738,
+          "mean": 0.01632934022599946,
+          "median": 0.016679242253303528,
+          "min": 0.013208957388997078
+        },
+        {
+          "component": 2,
+          "count": 4476,
+          "max": -0.7220144271850586,
+          "mean": -0.761341283212718,
+          "median": -0.7658085525035858,
+          "min": -0.7712533473968506
+        },
+        {
+          "component": 3,
+          "count": 4476,
+          "max": 0.6900732517242432,
+          "mean": 0.6461923459180239,
+          "median": 0.6411378085613251,
+          "min": 0.6345763206481934
+        },
+        {
+          "component": 4,
+          "count": 4476,
+          "max": 1.0471975803375244,
+          "mean": 1.0471975803375244,
+          "median": 1.0471975803375244,
+          "min": 1.0471975803375244
+        }
+      ],
+      "estimated_sample_rate_hz": 24.82203793806198,
+      "sample_count": 4476,
+      "sensor_duration_s": 180.283343824
+    }
+  }
+}

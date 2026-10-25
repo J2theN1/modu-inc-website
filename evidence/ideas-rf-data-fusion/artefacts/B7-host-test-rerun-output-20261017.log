@@ -1,0 +1,64 @@
+B7 host test re-run - retained run output (re-created harness)
+date-local: 2026-10-17 20:55:40 PDT
+date-utc:   2026-10-18T03:55:40Z
+host: Linux htch-runtime 7.0.0-39-generic #1 SMP PREEMPT_DYNAMIC Thu Sep 24 08:42:15 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+daemon-source: modu-bcm4390-rx-observerd.c (working copy of vault/artefacts/B7-modu-bcm4390-rx-observerd.c)
+daemon-source-sha256: 9d5843ed86d0bfdf3ba6ad7f9376ab2c100f1305ebe8723687b1aaa0e3bde7d2
+harness: test_rx_broker_main.c (re-created 2026-10-17)
+harness-sha256: f4339338cbf5f588cca0bf46ca3e36d67e43cfa862c493b748998f9608b7700f
+makefile-sha256: 4628731baa932d3773de441ad55246c30b185ccf7ac30ba08b9673bc8ae42674
+build+run: make test
+--- make test output (stdout+stderr) ---
+cc -O1 -g -DRX_BROKER_TEST_BACKEND -o rx_broker_test_host test_rx_broker_main.c
+./rx_broker_test_host
+[rx-observerd 03:55:41] restore monitor -> 0 rc=0
+[rx-observerd 03:55:41] restore promisc -> 0 rc=0
+[rx-observerd 03:55:41] restore channel -> 36 rc=0
+[rx-observerd 03:55:41] restore monitor -> 0 rc=0
+[rx-observerd 03:55:41] restore promisc -> 0 rc=0
+[rx-observerd 03:55:41] restore channel -> 36 rc=0
+ok 1 - dispatch: get_magic answers ok
+ok 2 - get_magic returns the proven magic value (hex + u32 pair)
+ok 3 - dispatch: get_version answers ok
+ok 4 - get_version returns 2
+ok 5 - dispatch: get_channel answers ok
+ok 6 - dispatch: get_radio answers ok
+ok 7 - dispatch: get_promisc answers ok
+ok 8 - dispatch: get_monitor answers ok
+ok 9 - dispatch: set_channel answers ok
+ok 10 - dispatch: set_promisc answers ok
+ok 11 - dispatch: set_monitor answers ok
+ok 12 - dispatch: phy_sample_collect answers ok
+ok 13 - dispatch: restore answers ok
+ok 14 - dispatch: status answers ok
+ok 15 - status reports the broker schema string
+ok 16 - unknown op rejected
+ok 17 - raw-opcode request rejected (no client-supplied opcodes)
+ok 18 - request with missing op rejected
+ok 19 - channel gate: 999 rejected
+ok 20 - channel gate: 14 rejected
+ok 21 - channel gate: 149 accepted
+ok 22 - get_channel reflects the accepted set_channel
+ok 23 - set_monitor(true) reports monitor true
+ok 24 - get_monitor reads back true
+ok 25 - set_promisc(true) reports promisc true
+ok 26 - get_promisc reads back true
+ok 27 - restore answers ok after sets
+ok 28 - restore returns monitor to its saved value (false)
+ok 29 - restore returns promisc to its saved value (false)
+ok 30 - sample collect: nframes 65 rejected (range 1..64)
+ok 31 - sample collect: nframes 64 accepted (upper bound)
+ok 32 - sample collect: byte_length and sample_count match the stub frame
+ok 33 - sample collect: printed sha256 matches the frame's digest
+ok 34 - sample collect: short firmware header becomes a typed error
+ok 35 - sample collect: oversized header length becomes a typed error
+ok 36 - sample collect: firmware rejection becomes a typed error (no crash)
+ok 37 - SHA-256 known vector: "abc"
+ok 38 - SHA-256 known vector: empty input
+ok 39 - base64 known vector: "Man"
+ok 40 - base64 known vector: "Ma" (single padding)
+ok 41 - base64 known vector: "M" (double padding)
+stub recorded 12 set-ops during the run
+RXB-TEST-SUMMARY: 41/41 checks passed
+--- make test exit code: 0 ---
